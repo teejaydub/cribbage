@@ -11,3 +11,6 @@ numpy = "*"
 
 [requires]
 python_version = "3.8"
+
+[scripts]
+compare = "python cribbage/test_players.py"
