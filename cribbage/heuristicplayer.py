@@ -175,15 +175,24 @@ class HeuristicCribbagePlayer(CribbagePlayer):
 
     def score_discard_to_other(self, dvalues):
         # Simplified version of http://www.cribbageforum.com/OppCrib.htm
-
-        # Don't discard 5s or sums of 5 or 15.
-        total = sum(dvalues)
-        if 5 in dvalues or total == 5 or total == 15:
-            return 0
+        # Returns a heuristic score of the negative of the expected crib score.
 
         # Prefer large spans that don't include low cards.
+        # Spans can run from 1 to 12, and generally produce total points from 4.3 to 6+.
+        # So pretend it's 4 points, then scaling up to 6 points for adjacent
         span = dvalues[1] - dvalues[0]
-        return span / 5
+        score = 4 + (13 - span) / 6
+
+        # 5s or sums of 5 or 15 are powerful.
+        total = sum(np.clip(dvalues, 1, 10))
+        if 5 in dvalues or total == 5 or total == 15:
+            score += 1
+
+        # As a separate step, a pair is a given - but we've already seen some of its effect as a close span.
+        if span == 0:
+            score += 1
+
+        return -score
 
 
     def score_play(self, linear_play, choice):
