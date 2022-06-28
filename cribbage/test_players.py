@@ -15,8 +15,8 @@ def showstats(scores, names):
     records = zip(scores, names)
     records = sorted(records, key=lambda r: r[0], reverse=True)
     for record in records:
-        percent = int(100 * record[0] / sum(scores))
-        print("{:12} {:6} {}%".format(record[1], record[0], percent))
+        percent = 100 * record[0] / sum(scores)
+        print("{:12} {:6.0f} {:.1f}%".format(record[1], record[0], percent))
 
 def round_robin(players, n=100):
     ''' Play n games between each pair of players, round-robin.
