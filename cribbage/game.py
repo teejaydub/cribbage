@@ -10,7 +10,7 @@ An object representing a game of cribbage between two CribbagePlayers.
 
 from __future__ import absolute_import, print_function
 import random
-from cribbage.round import Round
+from round import Round
 
 class Game(object):
     '''

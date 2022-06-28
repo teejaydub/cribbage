@@ -13,8 +13,8 @@ from collections import Counter
 import itertools
 import math
 import numpy as np
-from .cards import CARD_FACES, CARD_VALUES, card_worth, cards_worth, split_card
-from .utils import pairwise
+from cards import CARD_FACES, CARD_VALUES, card_worth, cards_worth, split_card, hand_tostring, card_tostring
+from utils import pairwise
 
 def score_hand(hand, draw=None, crib=False, verbose=False):
     '''
@@ -27,6 +27,8 @@ def score_hand(hand, draw=None, crib=False, verbose=False):
     '''
     assert len(hand) == 4
     score = 0
+    if verbose:
+        print(r"Score {} with starter {}".format(hand_tostring(hand), card_tostring(draw)))
     # split card values
     split_values_hand = [split_card(c) for c in hand]
     split_values = split_values_hand[:]

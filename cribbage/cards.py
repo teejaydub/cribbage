@@ -30,10 +30,19 @@ def split_card(vint):
     '''Splits a card value into its `face` and `suit` values.'''
     return vint % 13, vint // 13
 
+def split_tostring(splitpair):
+    return '{}{}'.format(CARD_FACES[splitpair[0]], CARD_SUITS[splitpair[1]])
+
 def card_tostring(vint):
     '''Returns a string representation of the given card value.'''
-    value, suit = split_card(vint)
-    return '{}{}'.format(CARD_FACES[value], CARD_SUITS[suit])
+    return split_tostring(split_card(vint))
+
+def hand_tostring(hand):
+    '''Return a string representation of an array of cards.'''
+    splits = [split_card(c) for c in hand]
+    splits = sorted(splits)
+    splits = sorted(splits, key=lambda p: p[0])
+    return '(' + ' '.join([split_tostring(c) for c in splits]) + ')'
 
 def string_tocard(sval):
     '''Converts a string representation into a card value.'''
