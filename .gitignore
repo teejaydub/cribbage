@@ -9,6 +9,7 @@
 /cribbage/.ropeproject/
 /cribbage/_cribbage_score.c
 /cribbage/_cribbage_score.so
+/cribbage/*.so
 /models
 /test_c_scoring/cribbage
 build/
