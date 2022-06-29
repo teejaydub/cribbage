@@ -39,15 +39,13 @@ def round_robin(players, n=100):
         result += other_scores
     return result
 
-
 n = 100
-
 players = [HeuristicCribbagePlayer(), SimpleCribbagePlayer(), MaxerCribbagePlayer()]
 player_names = ['Helen', 'Simon', 'Max']
 stats = np.zeros(len(players))
 playing = True
 
-print("Playing continuously - Ctrl+C to stop.")
+print(f"Playing continuously in batches of {n} games each for {len(players)} players - Ctrl+C to stop.")
 while playing:
     try:
         stats += round_robin(players, n)
