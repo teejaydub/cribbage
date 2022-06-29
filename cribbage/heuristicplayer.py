@@ -35,6 +35,17 @@ KEEP_COMBINATIONS = [(0, 1, 2, 3),
                      (1, 3, 4, 5),
                      (2, 3, 4, 5)]
 
+
+def pick_best(d: dict):
+    '''
+    Return a key from d with the largest value.
+    If there are multiple keys with the same value, pick at random.
+    '''
+    max_value = max(d.values())
+    best_choices = [k for (k, v) in d.items() if v == max_value]
+    return random.choice(best_choices)
+
+
 class HeuristicCribbagePlayer(CribbagePlayer):
     '''
     Cribbage player with moderately experienced heuristics.
@@ -72,16 +83,14 @@ class HeuristicCribbagePlayer(CribbagePlayer):
             discard_values = set(hand) - set(keep)
 
             # Find the heuristic score for this discard.
-            results[tuple(sorted(keep))] = self.score_discard(keep, discard_values, is_dealer, npdeck)
+            results[tuple(discard_values)] = self.score_discard(keep, discard_values, is_dealer, npdeck)
 
-        # Pick any arbitrary hand with the best score.
-        best_hand = max((v, k) for (k, v) in results.items())[1]
-        # print("Given {}, keep {} for max EV {}".format(hand_tostring(hand), hand_tostring(keep), max(samples)))
+        # Pick any arbitrary discard set with the best score.
+        best_discard = pick_best(results)
 
         # Return the indices of the cards to discard.
         # convert back into indices into hand
-        discard_values = set(hand) - set(best_hand)
-        return [idx for idx, card in enumerate(hand) if card in discard_values]
+        return [idx for idx, card in enumerate(hand) if card in best_discard]
 
     def play_card(self,
                   is_dealer,
@@ -119,11 +128,9 @@ class HeuristicCribbagePlayer(CribbagePlayer):
         results = {}
         for choice in choices:
             results[choice] = self.score_play(linear_play, choice)
-        max_value = max(results.values())
-        best_choices = [k for (k, v) in results.items() if v == max_value]
 
-        # Pick randomly from them.
-        return hand.index(random.choice(best_choices))
+        # Pick the best choice.
+        return hand.index(pick_best(results))
 
     # The heuristic logic:
 
@@ -133,8 +140,7 @@ class HeuristicCribbagePlayer(CribbagePlayer):
         score = score_hand(keep, None)
 
         # Find the value of the discard pair, from simple rules.
-        dvalues = sorted([split_card(c)[0] for c in discard])
-        dvalues = np.ones(2) + dvalues  # start with ace=1
+        dvalues = sorted([split_card(c)[0] + 1 for c in discard])  # start with ace=1
         score += self.score_discard_values(dvalues, is_dealer)
 
         return score
