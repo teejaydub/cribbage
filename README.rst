@@ -11,20 +11,45 @@
 
 Python library for experimenting with the game of cribbage.
 
-C Extension
-===========
+I've forked this heavily from https://github.com/wroberts/cribbage.
+Thanks very much, Will - your framework made it easy to get started.
 
-There is a C function which can score a cribbage hand 100 times faster
-than doing it in pure Python.
+Will was interested in training a good computer cribbage player; I'm more
+interested in learning what heuristics are best that are learnable by a human.
 
-To compile the Cython extension::
+To that end, I'm developing some `CribbagePlayer` classes here so I can compare their
+rankings when they play against each other.  Currently, they include:
 
-    python setup.py build_ext --inplace
+- `MaxerCribbagePlayer`, aka **Max**: Uses any convenient techniques, like exhaustive
+  lookahead and tables of expected values, that are easy to do in software.
 
-Then::
+- `HeuristicCribbagePlayer`, aka **Helen**: Uses techniques that I think I could
+  reasonably learn and remember - mostly simple rules that are expressed in integer point values.
 
-    from cribbage import _cribbage_score
-    _cribbage_score.score_hand(hand, draw)
+- `SimpleCribbagePlayer`, aka **Simon**: Will's implementation, for a straw man baseline.
+
+Currently, Max is the best player, but Helen is better than Simon.
+
+Plans
+=====
+
+* Add some more heuristics to express my own intuitions and some from other sources.
+
+* Rework Helen to parameterize all integer constants within the heuristics.
+
+* Train Helen continuously, choosing random values for heuristic parameters and keeping
+  the changes that result in better rankings over many games.
+
+Getting started
+===============
+
+`pipenv install` will set up the environment.
+
+`pipenv shell` will activate the environment.
+
+`pipenv run optimize` will compile Will's C function for scoring hands, to improve speed.
+
+`pipenv run compare` will start an endless tournament to rank the available players.
 
 Testing
 =======
@@ -33,21 +58,8 @@ In the base directory of the project, do::
 
     py.test
 
-References
-==========
-
-1. Mnih, Volodymyr, et al. `Human-level control through deep
-   reinforcement learning`_. Nature 518, no. 7540 (2015): 529-533.
-2. van Hasselt, Hado. `Double Q-learning`_. Poster at Advances in
-   Neural Information Processing Systems 23 (NIPS 2010), Vancouver,
-   British Columbia, Canada.
-
-.. _`Human-level control through deep reinforcement learning`: http://www.davidqiu.com:8888/research/nature14236.pdf
-.. _`Double Q-learning`: https://hadovanhasselt.files.wordpress.com/2015/12/doubleqposter.pdf
-
 Links
 =====
 
-- https://github.com/asrivat1/DeepLearningVideoGames/blob/master/Raw%20Game%20Code/tetris.py
-- https://www.nervanasys.com/demystifying-deep-reinforcement-learning/
-- https://www.nervanasys.com/deep-reinforcement-learning-with-neon/
+- https://github.com/wroberts/cribbage
+- http://www.cribbageforum.com/index.html
