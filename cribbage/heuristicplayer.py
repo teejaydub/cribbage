@@ -12,7 +12,7 @@ The class also provides some mechanics that other Player classes can use to simp
 from __future__ import absolute_import, print_function
 import random
 import numpy as np
-from cards import make_deck, hand_tostring, split_card, card_worth
+from cards import make_deck, hand_tostring, hand_to_faces, hand_to_values, split_card, card_worth, cards_worth
 from player import CribbagePlayer
 # try:
 #     from _cribbage_score import score_hand, score_play
@@ -127,7 +127,7 @@ class HeuristicCribbagePlayer(CribbagePlayer):
         choices = [hand[x] for x in legal_moves]
         results = {}
         for choice in choices:
-            results[choice] = self.score_play(linear_play, choice)
+            results[choice] = self.score_play(linear_play, choice, hand)
 
         # Pick the best choice.
         return hand.index(pick_best(results))
@@ -140,58 +140,70 @@ class HeuristicCribbagePlayer(CribbagePlayer):
         score = score_hand(keep, None)
 
         # Find the value of the discard pair, from simple rules.
-        dvalues = sorted([split_card(c)[0] + 1 for c in discard])  # start with ace=1
-        score += self.score_discard_values(dvalues, is_dealer)
+        dfs = hand_to_faces(discard, 1)
+        score += self.score_discard_indices(dfs, is_dealer)
+
+        # Add one point per card under 5, for pegging potential.
+        lows = len([c for c in keep if card_worth(c) < 5])
+        score += lows
 
         return score
 
-    def score_discard_values(self, dvalues, is_dealer):
-        ''' Return the heuristic value of discarding the given pair of card values (1-relative). '''
+    def score_discard_indices(self, dfs, is_dealer):
+        ''' Return the heuristic value of discarding the given pair of card indices (1-relative).
+            Arguments:
+            - `dfs`: The two face values to discard, 1-relative.
+            - `is_dealer`: True if the discard is to the player's own crib.
+        '''
         if is_dealer:
-            return self.score_discard_to_own(dvalues)
+            return self.score_discard_to_own(dfs)
         else:
-            return self.score_discard_to_other(dvalues)
+            return self.score_discard_to_other(dfs)
 
-    def score_discard_to_own(self, dvalues):
+    def score_discard_to_own(self, dfs):
         # From http://www.cribbageforum.com/YourCrib.htm
 
-        if np.array_equal(dvalues, (5, 5)):
+        if np.array_equal(dfs, (5, 5)):
             return 4
 
-        elif np.array_equal(dvalues, (2, 3)):
+        elif np.array_equal(dfs, (2, 3)):
             return 2
-        elif np.array_equal(dvalues, (4, 5)):
+        elif np.array_equal(dfs, (4, 5)):
             return 2
-        elif np.array_equal(dvalues, (5, 6)):
+        elif np.array_equal(dfs, (5, 6)):
             return 2
-        elif dvalues[0] == 5 and dvalues[1] >= 10:
+        elif dfs[0] == 5 and dfs[1] >= 10:
             return 2
-        elif np.array_equal(dvalues, (7, 8)):
+        elif np.array_equal(dfs, (7, 8)):
             return 2
 
-        elif np.array_equal(dvalues, (1, 4)):
+        elif np.array_equal(dfs, (1, 4)):
             return 1
-        elif dvalues[0] == dvalues[1] and dvalues[0] <= 8:
+        elif dfs[0] == dfs[1] and dfs[0] <= 8:
             return 1
-        elif dvalues[0] == 5 or dvalues[1] == 5:
+        elif 5 in dfs:
             return 1
 
         else:
             return 0
 
-    def score_discard_to_other(self, dvalues):
+    def score_discard_to_other(self, dfs):
         # Simplified version of http://www.cribbageforum.com/OppCrib.htm
         # Returns a heuristic score of the negative of the expected crib score.
 
         # Prefer large spans that don't include low cards.
         # Spans can run from 1 to 12, and generally produce total points from 4.3 to 6+.
         # So pretend it's 4 points, then scaling up to 6 points for adjacent
-        span = dvalues[1] - dvalues[0]
+        span = dfs[1] - dfs[0]
         score = 4 + (13 - span) / 6
 
+        # Edge cards are less risky, because they can only be extended in one direction.
+        if 1 in dfs or 13 in dfs:
+            score -= 1
+
         # 5s or sums of 5 or 15 are powerful.
-        total = sum(np.clip(dvalues, 1, 10))
-        if 5 in dvalues or total == 5 or total == 15:
+        total = sum(np.clip(dfs, 1, 10))
+        if 5 in dfs or total == 5 or total == 15:
             score += 1
 
         # As a separate step, a pair is a given - but we've already seen some of its effect as a close span.
@@ -201,6 +213,24 @@ class HeuristicCribbagePlayer(CribbagePlayer):
         return -score
 
 
-    def score_play(self, linear_play, choice):
-        # The play heuristic equals its immediate score.
-        return score_play(linear_play + [choice])
+    def score_play(self, linear_play, choice, hand):
+        # Start with the immediate score.
+        new_layout = linear_play + [choice]
+        new_hand = set(hand) - set([choice])
+        score = score_play(new_layout)
+
+        # Subtract if the resulting total is less than 15, because your opponent might make it.
+        # But that's OK if you can make a pair with the card that will make 15.
+        total = cards_worth(new_layout)
+        new_values = hand_to_values(new_hand)
+        if total < 15:
+            to15 = 15 - total
+            if to15 not in new_values:
+                score -= 1
+
+        # Add if the total is 11, and you have any tens to play.
+        if total == 11:
+            if 10 in new_values:
+                score += 1
+
+        return score

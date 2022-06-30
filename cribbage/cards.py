@@ -14,6 +14,7 @@ Spades to 3 representing Clubs).
 '''
 
 import random
+import numpy as np
 
 # ------------------------------------------------------------
 # Cards
@@ -27,7 +28,7 @@ def make_card(face, suit):
     return face + suit * 13
 
 def split_card(vint):
-    '''Splits a card value into its `face` and `suit` values.'''
+    '''Splits a card value into its `face` and `suit` values, base 0.'''
     return vint % 13, vint // 13
 
 def split_tostring(splitpair):
@@ -36,6 +37,14 @@ def split_tostring(splitpair):
 def card_tostring(vint):
     '''Returns a string representation of the given card value.'''
     return split_tostring(split_card(vint))
+
+def hand_to_faces(hand, ace):
+    ''' Convert a hand to a list of card face indices, starting at the value for ace. '''
+    return sorted([split_card(c)[0] + ace for c in hand])  # pair of values, with ace=0
+
+def hand_to_values(hand):
+    ''' Convert a hand to a list of card point values. '''
+    return np.clip(hand_to_faces(hand, 1), 1, 10)
 
 def hand_tostring(hand):
     '''Return a string representation of an array of cards.'''

@@ -11,7 +11,7 @@ Maxer is a player who can do all sorts of math in his head, and has an eidetic m
 from __future__ import absolute_import, print_function
 import random
 import numpy as np
-from cards import make_deck, hand_tostring, split_card
+import cards
 from player import CribbagePlayer
 from heuristicplayer import HeuristicCribbagePlayer
 try:
@@ -59,20 +59,20 @@ class MaxerCribbagePlayer(HeuristicCribbagePlayer):
 
     def score_discard(self, keep, discard, is_dealer, deck):
         ''' Return this player's idea of the heuristic score for this discard. '''
-        # Find the expected value of the score, over all possible starters.
+        # Find the expected value of the hand, over all possible starters.
         scores = [score_hand(keep, draw=c)
                    for c in deck]
         result = np.mean(scores)
 
         # Find the value of the discard pair, from a big table.
-        dvalues = sorted([split_card(c)[0] for c in discard])  # pair of values, with ace=0
+        dfs = cards.hand_to_faces(discard, 0)  # pair of values, with ace=0
         if is_dealer:
-            result += DISCARD_TO_OWN_EV[dvalues[0]][dvalues[1]]
+            result += DISCARD_TO_OWN_EV[dfs[0]][dfs[1]]
         else:
-            result -= DISCARD_TO_OTHER_EV[dvalues[0]][dvalues[1]]
+            result -= DISCARD_TO_OTHER_EV[dfs[0]][dfs[1]]
 
         return result
 
-    def score_play(self, linear_play, choice):
-        # The play heuristic equals its immediate score.
-        return score_play(linear_play + [choice])
+    def score_play(self, linear_play, choice, hand):
+        # Use the inherited value for now.
+        return super().score_play(linear_play, choice, hand)
