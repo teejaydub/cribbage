@@ -2,13 +2,6 @@
  Cribbage
 ==========
 
-.. image:: https://travis-ci.org/wroberts/cribbage.svg?branch=master
-    :target: https://travis-ci.org/wroberts/cribbage
-
-.. image:: https://coveralls.io/repos/wroberts/cribbage/badge.svg?branch=master
-  :target: https://coveralls.io/r/wroberts/cribbage?branch=master
-     :alt: Test code coverage
-
 Python library for experimenting with the game of cribbage.
 
 I've forked this heavily from https://github.com/wroberts/cribbage.
@@ -31,10 +24,10 @@ rankings when they play against each other.  Currently, they include:
 Currently, Max is the best player, but Helen is better than Simon.  Stats:
 
 ```
-Player       Games won  Percent
-Max               7124   40.2%
-Helen             5513   31.1%
-Simon             5063   28.6%
+    Player       Games won  Percent
+    Max               7124   40.2%
+    Helen             5513   31.1%
+    Simon             5063   28.6%
 ```
 
 Plans
@@ -57,13 +50,6 @@ Getting started
 `pipenv run optimize` will compile Will's C function for scoring hands, to improve speed.
 
 `pipenv run compare` will start an endless tournament to rank the available players.
-
-Testing
-=======
-
-In the base directory of the project, do::
-
-    py.test
 
 Links
 =====
