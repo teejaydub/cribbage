@@ -211,6 +211,10 @@ class HeuristicCribbagePlayer(CribbagePlayer):
         if span == 0:
             score += 1
 
+        # Jacks have a 1/4 chance to make His Nobs.
+        jacks = len([f for f in dfs if f == 11])
+        score -= jacks / 4
+
         return -score
 
 
