@@ -31,6 +31,10 @@ def split_card(vint):
     '''Splits a card value into its `face` and `suit` values, base 0.'''
     return vint % 13, vint // 13
 
+def card_face(vint):
+    '''Return the face value for the given card, starting with 1.'''
+    return vint % 13
+
 def split_tostring(splitpair):
     return '{}{}'.format(CARD_FACES[splitpair[0]], CARD_SUITS[splitpair[1]])
 

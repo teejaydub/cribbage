@@ -12,7 +12,8 @@ The class also provides some mechanics that other Player classes can use to simp
 from __future__ import absolute_import, print_function
 import random
 import numpy as np
-from cards import make_deck, hand_tostring, hand_to_faces, hand_to_values, split_card, card_worth, cards_worth
+
+from cards import make_deck, hand_tostring, hand_to_faces, hand_to_values, split_card, card_worth, cards_worth, card_face
 from player import CribbagePlayer
 # try:
 #     from _cribbage_score import score_hand, score_play
@@ -221,13 +222,22 @@ class HeuristicCribbagePlayer(CribbagePlayer):
         new_hand = set(hand) - set([choice])
         score = score_play(new_layout)
 
-        # Subtract if the resulting total is less than 15, because your opponent might make it.
+        # Subtract if the resulting total is > 4 and less than 15, because your opponent might make it.
         # But that's OK if you can make a pair with the card that will make 15.
         total = cards_worth(new_layout)
         new_values = hand_to_values(new_hand)
-        if total < 15:
+        if total > 4 and total < 15:
             to15 = 15 - total
             if to15 not in new_values:
+                score -= 1
+
+        # Leading with your highest card < 5 is a good idea.
+        # It saves any lower cards for making 31 later.
+        face_value = card_face(choice)
+        if len(linear_play) == 0 and face_value < 4:
+            # Is there anything higher than this in your hand that's less than 5?
+            better = [c for c in hand if card_face(c) > face_value and card_face(c) < 5]
+            if better:
                 score -= 1
 
         # Add if the total is 11, and you have any tens to play.
