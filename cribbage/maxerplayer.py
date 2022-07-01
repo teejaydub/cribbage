@@ -74,7 +74,7 @@ class MaxerCribbagePlayer(HeuristicCribbagePlayer):
 
         return result
 
-    def score_play(self, linear_play, choice, hand, played_cards):
+    def score_play(self, linear_play, choice, hand, played_cards, player_score):
         # Start with the points you'll make from this play.
         new_layout = linear_play + [choice]
         new_hand = set(hand) - set([choice])

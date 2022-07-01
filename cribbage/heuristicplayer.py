@@ -128,7 +128,7 @@ class HeuristicCribbagePlayer(CribbagePlayer):
         choices = [hand[x] for x in legal_moves]
         results = {}
         for choice in choices:
-            results[choice] = self.score_play(linear_play, choice, hand, played_cards)
+            results[choice] = self.score_play(linear_play, choice, hand, played_cards, player_score)
 
         # Pick the best choice.
         return hand.index(pick_best(results))
@@ -144,7 +144,7 @@ class HeuristicCribbagePlayer(CribbagePlayer):
         dfs = cards.hand_to_faces(discard, 1)
         score += self.score_discard_indices(dfs, is_dealer)
 
-        # Add one point per card under 5, for pegging potential.
+        # Add one point per card under 5 left in hand, for pegging potential.
         lows = len([c for c in keep if cards.card_worth(c) < 5])
         score += lows
 
@@ -218,7 +218,7 @@ class HeuristicCribbagePlayer(CribbagePlayer):
         return -score
 
 
-    def score_play(self, linear_play, choice, hand, played_cards):
+    def score_play(self, linear_play, choice, hand, played_cards, player_score):
         # Start with the immediate score.
         new_layout = linear_play + [choice]
         new_hand = set(hand) - set([choice])
@@ -232,19 +232,32 @@ class HeuristicCribbagePlayer(CribbagePlayer):
             to15 = 15 - total
             if to15 not in new_values:
                 score -= 1
-
-        # Leading with your highest card < 5 is a good idea.
-        # It saves any lower cards for making 31 later.
-        face_value = cards.card_face(choice)
-        if len(linear_play) == 0 and face_value < 4:
-            # Is there anything higher than this in your hand that's less than 5?
-            better = [c for c in hand if cards.card_face(c) > face_value and cards.card_face(c) < 5]
-            if better:
-                score -= 1
+                # And subtract more if it's a ten-card.
+                # Doesn't seem to help.
+                # if to15 == 10:
+                #     score -= 1
 
         # Add if the total is 11, and you have any tens to play.
         if total == 11:
             if 10 in new_values:
                 score += 1
+
+        # Leading choices:
+        if len(linear_play) == 0:
+            # Leading with your highest card < 5 is a good principle.
+            # It saves any lower cards for making 31 later.
+            face_value = cards.card_face(choice)
+            if face_value < 4:
+                # Is there anything higher than this in your hand that's less than 5?
+                better = [c for c in hand if cards.card_face(c) > face_value and cards.card_face(c) < 5]
+                if better:
+                    score -= 1
+
+            # But you might also lead with a 5 if you have 5-x-x-x.
+            # Maybe just in the endgame.
+            # Doesn't seem to help.
+            # (http://www.cribbageforum.com/Leading5.htm)
+            # if face_value == 5 and sum(new_values) == 35 and player_score > 100:
+            #     score += 2
 
         return score
