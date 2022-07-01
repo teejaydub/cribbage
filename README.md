@@ -1,6 +1,5 @@
-==========
- Cribbage
-==========
+Cribbage
+========
 
 Python library for experimenting with the game of cribbage.
 
@@ -38,7 +37,13 @@ Plans
 * Rework Helen to parameterize all integer constants within the heuristics.
 
 * Train Helen continuously, choosing random values for heuristic parameters and keeping
-  the changes that result in better rankings over many games.
+  the changes that result in better rankings over many games.  See if that improves her ranking.
+
+* Work on determining which heuristics are most powerful/helpful.
+
+* Group the heuristics by degree of power, and make players Anna, Ben, and Clara, where
+  Anna starts with a heuristic set from Helen that's easy to remember, and then each
+  adds some more.
 
 Getting started
 ===============
