@@ -13,12 +13,10 @@ from __future__ import absolute_import, print_function
 import random
 import numpy as np
 
-from cards import make_deck, hand_tostring, hand_to_faces, hand_to_values, split_card, card_worth, cards_worth, card_face
+import cards
 from player import CribbagePlayer
-# try:
-#     from _cribbage_score import score_hand, score_play
-# except ImportError:
-from cribbage_score import score_hand, score_play
+import cribbage_score
+import _cribbage_score
 
 KEEP_COMBINATIONS = [(0, 1, 2, 3),
                      (0, 1, 2, 4),
@@ -77,7 +75,7 @@ class HeuristicCribbagePlayer(CribbagePlayer):
         - `opponent_score`: the score of the current player's opponent
         '''
         # Loop through all possibilities for what to keep
-        deck = sorted(set(make_deck()) - set(hand))
+        deck = sorted(set(cards.make_deck()) - set(hand))
         npdeck = np.array(deck)
         nphand = np.array(hand)
         results = {}
@@ -140,14 +138,14 @@ class HeuristicCribbagePlayer(CribbagePlayer):
     def score_discard(self, keep, discard, is_dealer, deck):
         ''' Return this player's idea of the heuristic score for this discard. '''
         # Find the score without a starter.
-        score = score_hand(keep, None)
+        score = cribbage_score.score_hand(keep, None)
 
         # Find the value of the discard pair, from simple rules.
-        dfs = hand_to_faces(discard, 1)
+        dfs = cards.hand_to_faces(discard, 1)
         score += self.score_discard_indices(dfs, is_dealer)
 
         # Add one point per card under 5, for pegging potential.
-        lows = len([c for c in keep if card_worth(c) < 5])
+        lows = len([c for c in keep if cards.card_worth(c) < 5])
         score += lows
 
         return score
@@ -220,12 +218,12 @@ class HeuristicCribbagePlayer(CribbagePlayer):
         # Start with the immediate score.
         new_layout = linear_play + [choice]
         new_hand = set(hand) - set([choice])
-        score = score_play(new_layout)
+        score = _cribbage_score.score_play(new_layout)
 
         # Subtract if the resulting total is > 4 and less than 15, because your opponent might make it.
         # But that's OK if you can make a pair with the card that will make 15.
-        total = cards_worth(new_layout)
-        new_values = hand_to_values(new_hand)
+        total = cards.cards_worth(new_layout)
+        new_values = cards.hand_to_values(new_hand)
         if total > 4 and total < 15:
             to15 = 15 - total
             if to15 not in new_values:
@@ -233,10 +231,10 @@ class HeuristicCribbagePlayer(CribbagePlayer):
 
         # Leading with your highest card < 5 is a good idea.
         # It saves any lower cards for making 31 later.
-        face_value = card_face(choice)
+        face_value = cards.card_face(choice)
         if len(linear_play) == 0 and face_value < 4:
             # Is there anything higher than this in your hand that's less than 5?
-            better = [c for c in hand if card_face(c) > face_value and card_face(c) < 5]
+            better = [c for c in hand if cards.card_face(c) > face_value and cards.card_face(c) < 5]
             if better:
                 score -= 1
 
