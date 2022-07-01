@@ -15,7 +15,8 @@ import cards
 from player import CribbagePlayer
 from heuristicplayer import HeuristicCribbagePlayer
 try:
-    from _cribbage_score import score_hand, score_play
+    from _cribbage_score import score_hand, score_play, get_legal_play_idxs
+
 except ImportError:
     from cribbage_score import score_hand, score_play
 
@@ -73,6 +74,17 @@ class MaxerCribbagePlayer(HeuristicCribbagePlayer):
 
         return result
 
-    def score_play(self, linear_play, choice, hand):
-        # Use the inherited value for now.
-        return super().score_play(linear_play, choice, hand)
+    def score_play(self, linear_play, choice, hand, played_cards):
+        # Start with the points you'll make from this play.
+        new_layout = linear_play + [choice]
+        new_hand = set(hand) - set([choice])
+        score = score_play(new_layout)
+
+        # Subtract what your opponent might make on her next play.
+        possible_cards = sorted(set(cards.make_deck()) - set(played_cards) - set(hand))
+        next_moves = get_legal_play_idxs(possible_cards, new_layout)
+        if next_moves:
+            next_score = np.mean([score_play(new_layout + [c]) for c in next_moves])
+            score -= next_score
+
+        return score

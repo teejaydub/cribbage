@@ -41,6 +41,8 @@ def pick_best(d: dict):
     Return a key from d with the largest value.
     If there are multiple keys with the same value, pick at random.
     '''
+    if not d:
+        return None
     max_value = max(d.values())
     best_choices = [k for (k, v) in d.items() if v == max_value]
     return random.choice(best_choices)
@@ -127,7 +129,7 @@ class HeuristicCribbagePlayer(CribbagePlayer):
         choices = [hand[x] for x in legal_moves]
         results = {}
         for choice in choices:
-            results[choice] = self.score_play(linear_play, choice, hand)
+            results[choice] = self.score_play(linear_play, choice, hand, played_cards)
 
         # Pick the best choice.
         return hand.index(pick_best(results))
@@ -213,7 +215,7 @@ class HeuristicCribbagePlayer(CribbagePlayer):
         return -score
 
 
-    def score_play(self, linear_play, choice, hand):
+    def score_play(self, linear_play, choice, hand, played_cards):
         # Start with the immediate score.
         new_layout = linear_play + [choice]
         new_hand = set(hand) - set([choice])
