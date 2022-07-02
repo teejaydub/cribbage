@@ -18,9 +18,6 @@ class ParameterizedHeuristicCribbagePlayer(HeuristicCribbagePlayer):
 
     An instance can be converted to and from a short(-ish) string, encoding
     the weight values.
-
-    Weights can be integral or floating point.  The main advantage of integral
-    weights is that they can be easy for a human to implement.
     '''
 
     # Override in derived classes to set the number of parameters.
@@ -32,12 +29,12 @@ class ParameterizedHeuristicCribbagePlayer(HeuristicCribbagePlayer):
         '''
         # Floats for the weights used.
         super().__init__()
+        # Weight parameters by 1.
+        self.weights = [1 for i in range(self.NUM_PARAMS)]
         if parameters:
-            # Don't need weights if we're just restoring existing parameters.
-            self.parameters = [int(p) for p in parameters.split('/')]
+            # Just restore existing parameters.
+            self.parameters = [float(p) for p in parameters.split('/')]
         else:
-            # Weight parameters by 1.
-            self.weights = [1 for i in range(self.NUM_PARAMS)]
             # The parameters, scaled to the nominal range.  None until first seen.
             self.parameters = [None for i in range(self.NUM_PARAMS)]
 
@@ -61,27 +58,7 @@ class ParameterizedHeuristicCribbagePlayer(HeuristicCribbagePlayer):
         self.weights[i] = self.random_weight()
         self.parameters[i] = None
 
-    def IP(self, index: int, nominal: int) -> int:
-        '''
-        Return the nominal value for an integer parameter, modified by its current weight.
-
-        An integral value is returned, within the range [-1..2] * nominal.
-
-        The nominal value for this parameter index should be the same on every call.
-
-        Arguments:
-        - `index` - A unique ID for this parameter.  Weights will be consistent for this ID.
-        - `nominal` - The nominal value for this parameter.
-        '''
-        result = self.parameters[index]
-        if result is None:
-            # First call.  Scale it to the nominal value.
-            result = self.weights[index] * nominal
-            result = round(result)
-            self.parameters[index] = result
-        return result
-
-    def FP(self, index: int, nominal: float) -> float:
+    def P(self, index: int, nominal: float) -> float:
         '''
         Return the nominal value for a floating-point parameter, modified by its current weight.
 
@@ -96,6 +73,7 @@ class ParameterizedHeuristicCribbagePlayer(HeuristicCribbagePlayer):
         result = self.parameters[index]
         if result is None:
             # First call.  Scale it to the nominal value.
-            result = self.weights * nominal
+            result = self.weights[index] * nominal
             self.parameters[index] = result
+            print(f"new parameter @{index} = {result:.2f} from weight {self.weights[index]:.2f} and nominal {nominal}")
         return result

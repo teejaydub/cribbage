@@ -20,7 +20,7 @@ class LearnableHeuristicCribbagePlayer(ParameterizedHeuristicCribbagePlayer):
 
         # Add one point per card under 5 left in hand, for pegging potential.
         lows = len([c for c in keep if cards.card_worth(c) < 5])
-        score += min(lows, self.IP(0, 2))
+        score += min(lows, self.P(0, 2))
 
         return score
 
@@ -59,7 +59,7 @@ class LearnableHeuristicCribbagePlayer(ParameterizedHeuristicCribbagePlayer):
         # Spans can run from 1 to 12, and generally produce total points from 4.3 to 6+.
         # So pretend it's 4 points, then scaling up to 6 points for adjacent
         span = dfs[1] - dfs[0]
-        score = 4 + (13 - span) / 6.0 * self.IP(1, 1)
+        score = 4 + (13 - span) / 6.0 * self.P(1, 1)
 
         # Edge cards are less risky, because they can only be extended in one direction.
         if 1 in dfs or 13 in dfs:
@@ -68,11 +68,11 @@ class LearnableHeuristicCribbagePlayer(ParameterizedHeuristicCribbagePlayer):
         # 5s or sums of 5 or 15 are powerful.
         total = sum(np.clip(dfs, 1, 10))
         if 5 in dfs or total == 5 or total == 15:
-            score += self.IP(2, 1)
+            score += self.P(2, 1)
 
         # As a separate step, a pair is a given - but we've already seen some of its effect as a close span.
         if span == 0:
-            score += self.IP(3, 1)
+            score += self.P(3, 1)
 
         # Jacks have a 1/4 chance to make His Nobs.
         jacks = len([f for f in dfs if f == 11])
@@ -93,15 +93,15 @@ class LearnableHeuristicCribbagePlayer(ParameterizedHeuristicCribbagePlayer):
         if total > 4 and total < 15:
             to15 = 15 - total
             if to15 not in new_values:
-                score -= self.IP(4, 1)
+                score -= self.P(4, 1)
                 # And subtract more if it's a ten-card.
                 if to15 == 10:
-                    score -= self.IP(5, 1)
+                    score -= self.P(5, 1)
 
         # Add if the total is 11, and you have any tens to play.
         if total == 11:
             if 10 in new_values:
-                score += self.IP(6, 1)
+                score += self.P(6, 1)
 
         # Leading choices:
         if len(linear_play) == 0:
@@ -112,12 +112,12 @@ class LearnableHeuristicCribbagePlayer(ParameterizedHeuristicCribbagePlayer):
                 # Is there anything higher than this in your hand that's less than 5?
                 better = [c for c in hand if cards.card_face(c) > face_value and cards.card_face(c) < 5]
                 if better:
-                    score -= self.IP(7, 1)
+                    score -= self.P(7, 1)
 
             # But you might also lead with a 5 if you have 5-x-x-x.
             # Maybe just in the endgame.
             # (http://www.cribbageforum.com/Leading5.htm)
             if face_value == 5 and sum(new_values) == 35 and player_score > 100:
-                score += self.IP(8, 2)
+                score += self.P(8, 2)
 
         return score

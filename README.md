@@ -32,12 +32,19 @@ Currently, Max is the best player, but Helen is better than Simon.  Stats:
 Plans
 =====
 
-* Train Helen continuously, choosing random values for heuristic parameters and keeping
-  the changes that result in better rankings over many games.  See if that improves her ranking.
-  * Convert to floating-point weights.
+* Train Helen continuously, choosing random values for heuristic parameters
+  and keeping the changes that result in better rankings over many games. See
+  if that improves her ranking.
+  * Don't keep parameter sets if they're identical.  Means we need to register
+    parameters earlier, like when the class is created.
+  * Switch to a genetic algorithm, that does round-robin for more players at
+    once, then replaces the n-2 worst ones with a genetic combination of the
+    2 best ones.
+  * Add all the heuristic scores, even the ones from authorities.
   * Parallelize this, so it can run over multiple processors at once.
 
-* Work on determining which heuristics are most powerful/helpful.
+* Work on determining which heuristics are most powerful/helpful.  Similar
+  process, but pick a set of parameters to clear to 0.
 
 * Group the heuristics by degree of power, and make players Anna, Ben, and Clara, where
   Anna starts with a heuristic set from Helen that's easy to remember, and then each
