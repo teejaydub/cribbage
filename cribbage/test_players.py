@@ -15,6 +15,7 @@ from maxerplayer import MaxerCribbagePlayer
 
 
 def showstats(scores, names):
+    print("")
     print("{:12} {:9}  {}".format('Player', 'Games won', 'Percent'))
     records = zip(scores, names)
     records = sorted(records, key=lambda r: r[0], reverse=True)
@@ -43,25 +44,31 @@ def round_robin(players, n=100):
         result += other_scores
     return result
 
-n = 100
-players = [LearnableHeuristicCribbagePlayer(), SimpleCribbagePlayer(), MaxerCribbagePlayer()]
-player_names = ['Helen', 'Simon', 'Max']
+def main():
+    n = 100
+    players = [LearnableHeuristicCribbagePlayer(), SimpleCribbagePlayer(), MaxerCribbagePlayer()]
+    player_names = ['Helen', 'Simon', 'Max']
 
-trainee = LearnableHeuristicCribbagePlayer()
-trainee.randomize_weights()
-players.append(trainee)
-player_names.append('Trainee')
+    # Include a random Trainee.
+    # trainee = LearnableHeuristicCribbagePlayer()
+    # trainee.randomize_weights()
+    # players.append(trainee)
+    # player_names.append('Trainee')
 
-stats = np.zeros(len(players))
-playing = True
-random.seed()
+    stats = np.zeros(len(players))
+    playing = True
+    random.seed()
 
-print(f"Playing continuously in batches of {n} games each for {len(players)} players - Ctrl+C to stop.")
-while playing:
-    try:
-        stats += round_robin(players, n)
-        showstats(stats, player_names)
-        print("")
-    except KeyboardInterrupt:
-        playing = False
-        print("Trainee parameters: " + str(trainee))
+    print(f"Playing continuously in batches of {n} games each for {len(players)} players - Ctrl+C to stop.")
+    while playing:
+        try:
+            stats += round_robin(players, n)
+            showstats(stats, player_names)
+            print("")
+        except KeyboardInterrupt:
+            playing = False
+            print("")
+            print("Trainee parameters: " + str(trainee))
+
+if __name__ == "__main__":
+    main()

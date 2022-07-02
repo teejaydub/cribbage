@@ -47,11 +47,19 @@ class ParameterizedHeuristicCribbagePlayer(HeuristicCribbagePlayer):
         else:
             return '|'.join([str(w) for w in self.weights])
 
+    def random_weight(self):
+        return np.clip(random.gauss(mu=1, sigma=1), -1, 2)
+
     def randomize_weights(self):
-        ''' Sets weights randomly. '''
-        self.weights = [np.clip(random.gauss(mu=1, sigma=1), -1, 2)
-            for i in range(self.NUM_PARAMS)]
+        ''' Set all weights randomly. '''
+        self.weights = [self.random_weight() for i in range(self.NUM_PARAMS)]
         self.parameters = [None for i in range(self.NUM_PARAMS)]
+
+    def randomize_one_weight(self):
+        ''' Set one weight randomly. '''
+        i = random.choice(range(self.NUM_PARAMS))
+        self.weights[i] = self.random_weight()
+        self.parameters[i] = None
 
     def IP(self, index: int, nominal: int) -> int:
         '''

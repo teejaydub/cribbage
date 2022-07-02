@@ -34,6 +34,8 @@ Plans
 
 * Train Helen continuously, choosing random values for heuristic parameters and keeping
   the changes that result in better rankings over many games.  See if that improves her ranking.
+  * Convert to floating-point weights.
+  * Parallelize this, so it can run over multiple processors at once.
 
 * Work on determining which heuristics are most powerful/helpful.
 

@@ -130,4 +130,6 @@ def compare_players(players, num_games=1000):
         game = Game(players)
         game.play()
         stats[game.winner] += 1
+        if _idx % 30 == 0:
+            print('.', end='', flush=True)
     return stats
