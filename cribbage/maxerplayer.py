@@ -1,14 +1,4 @@
-#!/usr/bin/env python
-# -*- coding: utf-8 -*-
 
-'''
-maxerplayer.py
-(c) Timothy Weber, June 2022
-
-Maxer is a player who can do all sorts of math in his head, and has an eidetic memory.
-'''
-
-from __future__ import absolute_import, print_function
 import random
 import numpy as np
 import cards
@@ -55,7 +45,8 @@ DISCARD_TO_OTHER_EV = [
 
 class MaxerCribbagePlayer(HeuristicCribbagePlayer):
     '''
-    Cribbage player that looks for maximum value with no lookahead, choosing randomly thereafter.
+    Cribbage player that uses statistical tables and lookahead, including
+    tools that would be hard to use perfectly as a human.
     '''
 
     def score_discard(self, keep, discard, is_dealer, deck):

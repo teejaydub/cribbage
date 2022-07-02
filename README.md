@@ -32,8 +32,6 @@ Currently, Max is the best player, but Helen is better than Simon.  Stats:
 Plans
 =====
 
-* Rework Helen to parameterize all integer constants within the heuristics.
-
 * Train Helen continuously, choosing random values for heuristic parameters and keeping
   the changes that result in better rankings over many games.  See if that improves her ranking.
 

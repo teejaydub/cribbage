@@ -1,22 +1,10 @@
-#!/usr/bin/env python
-# -*- coding: utf-8 -*-
 
-'''
-heuristicplayer.py
-(c) Timothy Weber, June 2022
-
-This player uses basic heuristics, like a normal person could memorize.
-The class also provides some mechanics that other Player classes can use to simplify evaluation.
-'''
-
-from __future__ import absolute_import, print_function
 import random
 import numpy as np
 
 import cards
 from player import CribbagePlayer
-import cribbage_score
-import _cribbage_score
+
 
 KEEP_COMBINATIONS = [(0, 1, 2, 3),
                      (0, 1, 2, 4),
@@ -49,12 +37,8 @@ def pick_best(d: dict):
 
 class HeuristicCribbagePlayer(CribbagePlayer):
     '''
-    Cribbage player with heuristics that a human can remember.
+    Abstract base class for cribbage players that make decisions based on heuristic scores.
     '''
-
-    # def __init__(self):
-    #     '''Constructor.'''
-    #     super().__init__()
 
     def discard(self,
                 is_dealer,

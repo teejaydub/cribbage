@@ -1,8 +1,11 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
+import random
 import sys
+
 import numpy as np
+
 from game import compare_players
 
 from randomplayer import RandomCribbagePlayer
@@ -43,8 +46,15 @@ def round_robin(players, n=100):
 n = 100
 players = [LearnableHeuristicCribbagePlayer(), SimpleCribbagePlayer(), MaxerCribbagePlayer()]
 player_names = ['Helen', 'Simon', 'Max']
+
+trainee = LearnableHeuristicCribbagePlayer()
+trainee.randomize_weights()
+players.append(trainee)
+player_names.append('Trainee')
+
 stats = np.zeros(len(players))
 playing = True
+random.seed()
 
 print(f"Playing continuously in batches of {n} games each for {len(players)} players - Ctrl+C to stop.")
 while playing:
@@ -54,3 +64,4 @@ while playing:
         print("")
     except KeyboardInterrupt:
         playing = False
+        print("Trainee parameters: " + str(trainee))
