@@ -7,7 +7,7 @@ from game import compare_players
 
 from randomplayer import RandomCribbagePlayer
 from simpleplayer import SimpleCribbagePlayer
-from heuristicplayer import HeuristicCribbagePlayer
+from learnable_player import LearnableHeuristicCribbagePlayer
 from maxerplayer import MaxerCribbagePlayer
 
 
@@ -41,7 +41,7 @@ def round_robin(players, n=100):
     return result
 
 n = 100
-players = [HeuristicCribbagePlayer(), SimpleCribbagePlayer(), MaxerCribbagePlayer()]
+players = [LearnableHeuristicCribbagePlayer(), SimpleCribbagePlayer(), MaxerCribbagePlayer()]
 player_names = ['Helen', 'Simon', 'Max']
 stats = np.zeros(len(players))
 playing = True
