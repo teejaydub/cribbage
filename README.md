@@ -35,8 +35,6 @@ Plans
 * Train Helen continuously, choosing random values for heuristic parameters
   and keeping the changes that result in better rankings over many games. See
   if that improves her ranking.
-  * Don't play parameter sets if they're identical.
-    * Shift to having the parameters all just be 0-1 multipliers, so you scale them otherwise by hand.
   * Add CSV output so we can graph the progress over time.
   * Optimize each parameter individually, with binary search.
     * Instead of a fixed number of games, shoot for a fixed number of usages of that parameter.

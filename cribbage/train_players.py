@@ -25,9 +25,10 @@ def main():
     bestHelen = LearnableHeuristicCribbagePlayer()
     newHelen = LearnableHeuristicCribbagePlayer()
 
-    bestHelen = LearnableHeuristicCribbagePlayer('0.15/1.00/-0.19/1.74/1.00/1.00/1.00/0.88/2.00')
+    bestHelen = LearnableHeuristicCribbagePlayer('0.15, 1.00, 0.54, 1.73, 1.00, 1.00, 1.00, 1.22')
 
     print("Restoring prior best parameters: " + str(bestHelen))
+    print("")
 
     players = [newHelen, bestHelen, Max]
     player_names = ['New Helen', 'Best Helen', 'Max']
@@ -36,14 +37,17 @@ def main():
     random.seed()
 
     print(f"Playing continuously in batches of {n} games each for {len(players)} players - Ctrl+C to stop.")
+    print("")
+
     while playing:
         try:
-            newHelen.parameters = bestHelen.parameters
+            newHelen.parameters = list(bestHelen.parameters)
             newHelen.randomize_one_weight()
+            print("New Helen's parameters: " + str(newHelen))
+
             stats = round_robin(players, n)
             showstats(stats, player_names)
 
-            print("New Helen's parameters: " + str(newHelen))
             if stats[0] > stats[1] + 0.2:
                 print("Old parameters:         " + str(bestHelen))
                 print("Now she's the best Helen going forward.")
