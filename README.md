@@ -35,9 +35,9 @@ Plans
 * Train Helen continuously, choosing random values for heuristic parameters
   and keeping the changes that result in better rankings over many games. See
   if that improves her ranking.
-  * Add CSV output so we can graph the progress over time.
   * Optimize each parameter individually, with binary search.
-    * Instead of a fixed number of games, shoot for a fixed number of usages of that parameter.
+  * Instead of a fixed number of games, shoot for a fixed number of usages of that parameter.
+  * Add CSV output so we can graph the progress over time.  (Or just show graphs, I guess)
   * Switch to a genetic algorithm, that does round-robin for more players at
     once, then replaces the n-2 worst ones with a genetic combination of the
     2 best ones + 1 small mutation.

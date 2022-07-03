@@ -25,7 +25,7 @@ def main():
     bestHelen = LearnableHeuristicCribbagePlayer()
     newHelen = LearnableHeuristicCribbagePlayer()
 
-    bestHelen = LearnableHeuristicCribbagePlayer('0.15, 1.00, 0.54, 1.73, 1.00, 1.00, 1.00, 1.22')
+    bestHelen = LearnableHeuristicCribbagePlayer('0.15, 1.00, 0.54, 1.73, 1.00, 1.00, 1.00, 1.22, 1.0')
 
     print("Restoring prior best parameters: " + str(bestHelen))
     print("")
