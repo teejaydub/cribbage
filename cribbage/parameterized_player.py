@@ -40,9 +40,9 @@ class ParameterizedHeuristicCribbagePlayer(HeuristicCribbagePlayer):
 
     def __str__(self):
         if self.parameters[0]:
-            return '/'.join([str(p) for p in self.parameters])
+            return '/'.join([f"{p:0.2f}" for p in self.parameters if p is not None])
         else:
-            return '|'.join([str(w) for w in self.weights])
+            return '|'.join([f"{p:0.2f}" for w in self.weights])
 
     def random_weight(self):
         return np.clip(random.gauss(mu=1, sigma=1), -1, 2)

@@ -25,7 +25,8 @@ def main():
     bestHelen = LearnableHeuristicCribbagePlayer()
     newHelen = LearnableHeuristicCribbagePlayer()
 
-    bestHelen = LearnableHeuristicCribbagePlayer('1.59/1.42/1/1.25/1/1/1.39/1/2')
+    bestHelen = LearnableHeuristicCribbagePlayer('0.15/1.00/-0.19/1.74/1.00/1.00/1.00/0.88/2.00')
+
     print("Restoring prior best parameters: " + str(bestHelen))
 
     players = [newHelen, bestHelen, Max]
@@ -43,12 +44,12 @@ def main():
             showstats(stats, player_names)
 
             print("New Helen's parameters: " + str(newHelen))
-            print("Old parameters:         " + str(newHelen))
-            if stats[0] > stats[1]:
+            if stats[0] > stats[1] + 0.2:
+                print("Old parameters:         " + str(bestHelen))
                 print("Now she's the best Helen going forward.")
                 bestHelen.parameters = newHelen.parameters
             else:
-                print("Keeping former best, with parameters: " + str(bestHelen))
+                print("Keeping former best:    " + str(bestHelen))
 
             print("")
         except KeyboardInterrupt:

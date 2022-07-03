@@ -35,12 +35,15 @@ Plans
 * Train Helen continuously, choosing random values for heuristic parameters
   and keeping the changes that result in better rankings over many games. See
   if that improves her ranking.
-  * Don't keep parameter sets if they're identical.  Means we need to register
-    parameters earlier, like when the class is created.
+  * Don't play parameter sets if they're identical.
+    * Shift to having the parameters all just be 0-1 multipliers, so you scale them otherwise by hand.
+  * Add CSV output so we can graph the progress over time.
+  * Optimize each parameter individually, with binary search.
+    * Instead of a fixed number of games, shoot for a fixed number of usages of that parameter.
   * Switch to a genetic algorithm, that does round-robin for more players at
     once, then replaces the n-2 worst ones with a genetic combination of the
-    2 best ones.
-  * Add all the heuristic scores, even the ones from authorities.
+    2 best ones + 1 small mutation.
+  * Add parameters for all the heuristic scores, even the ones from authorities.
   * Parallelize this, so it can run over multiple processors at once.
 
 * Work on determining which heuristics are most powerful/helpful.  Similar
