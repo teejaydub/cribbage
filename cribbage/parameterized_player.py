@@ -28,14 +28,15 @@ class ParameterizedHeuristicCribbagePlayer(HeuristicCribbagePlayer):
         ''' Initializes with the specified parameter string.
             If parameters are not supplied, weight all parameters normally - by 1.
         '''
-        # Floats for the weights used.
         super().__init__()
+
+        # Floats for the weights used.
         if parameters:
             # Just restore existing parameters.
             self.parameters = [float(p) for p in parameters.split(', ')]
         else:
             # All weights are 1.
-            self.parameers = [1 for i in range(self.NUM_PARAMS)]
+            self.parameters = [1 for i in range(self.NUM_PARAMS)]
 
     def __str__(self):
         return ', '.join([f"{p:0.2f}" for p in self.parameters])

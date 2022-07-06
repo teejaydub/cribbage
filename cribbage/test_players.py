@@ -14,13 +14,13 @@ from learnable_player import LearnableHeuristicCribbagePlayer
 from maxerplayer import MaxerCribbagePlayer
 
 
-def showstats(scores, names):
+def showstats(scores, names, games_each):
     print("")
     print("{:12} {:9}  {}".format('Player', 'Games won', 'Percent'))
     records = zip(scores, names)
-    records = sorted(records, key=lambda r: r[0], reverse=True)
+    records = sorted(records, key=lambda r: r[0], reverse=True)  # best first
     for record in records:
-        percent = 100 * record[0] / sum(scores)
+        percent = 100 * record[0] / games_each
         print("{:12} {:9.0f}   {:.1f}%".format(record[1], record[0], percent))
 
 def round_robin(players, n=100):
@@ -49,26 +49,21 @@ def main():
     players = [LearnableHeuristicCribbagePlayer(), SimpleCribbagePlayer(), MaxerCribbagePlayer()]
     player_names = ['Helen', 'Simon', 'Max']
 
-    # Include a random Trainee.
-    # trainee = LearnableHeuristicCribbagePlayer()
-    # trainee.randomize_weights()
-    # players.append(trainee)
-    # player_names.append('Trainee')
-
     stats = np.zeros(len(players))
+    games_each = 0
     playing = True
     random.seed()
 
-    print(f"Playing continuously in batches of {n} games each for {len(players)} players - Ctrl+C to stop.")
+    print(f"Playing continuously in batches of {n} games for each pair of {len(players)} players - Ctrl+C to stop.")
     while playing:
         try:
             stats += round_robin(players, n)
-            showstats(stats, player_names)
+            games_each += n * (len(players) - 1)
+            showstats(stats, player_names, games_each)
             print("")
         except KeyboardInterrupt:
             playing = False
             print("")
-            print("Trainee parameters: " + str(trainee))
 
 if __name__ == "__main__":
     main()

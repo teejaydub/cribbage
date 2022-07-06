@@ -20,13 +20,13 @@ rankings when they play against each other.  Currently, they include:
 
 - `SimpleCribbagePlayer`, aka **Simon**: Will's implementation, for a straw man baseline.
 
-Currently, Max is the best player, but Helen is better than Simon.  Stats:
+Currently, Max is the best player, but Helen is better than Simon.  Typical stats:
 
 ```
-    Player       Games won  Percent
-    Max               3503   40.3%
-    Helen             2769   31.8%
-    Simon             2428   27.9%
+  Player       Games won  Percent
+  Max               2105   61.9%
+  Helen             1554   45.7%
+  Simon             1441   42.4%
 ```
 
 Plans

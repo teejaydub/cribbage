@@ -20,12 +20,12 @@ from maxerplayer import MaxerCribbagePlayer
 from test_players import showstats, round_robin
 
 def main():
-    n = 2000
+    n = 200
     Max = MaxerCribbagePlayer()
     bestHelen = LearnableHeuristicCribbagePlayer()
     newHelen = LearnableHeuristicCribbagePlayer()
 
-    bestHelen = LearnableHeuristicCribbagePlayer('0.15, 1.00, 0.54, 1.73, 1.00, 1.00, 1.00, 1.22, 1.0')
+    bestHelen = LearnableHeuristicCribbagePlayer('-0.60, 1.16, 0.07, 1.73, 1.40, 1.51, 1.08, 1.26, 2.00')
 
     print("Restoring prior best parameters: " + str(bestHelen))
     print("")
@@ -46,7 +46,7 @@ def main():
             print("New Helen's parameters: " + str(newHelen))
 
             stats = round_robin(players, n)
-            showstats(stats, player_names)
+            showstats(stats, player_names, n * (len(players) - 1))
 
             if stats[0] > stats[1] + 0.2:
                 print("Old parameters:         " + str(bestHelen))
