@@ -111,8 +111,8 @@ class LearnableHeuristicCribbagePlayer(ParameterizedHeuristicCribbagePlayer):
             if face_value < 4:
                 # Is there anything higher than this in your hand that's less than 5?
                 better = [c for c in hand if cards.card_face(c) > face_value and cards.card_face(c) < 5]
-                if better:
-                    score -= self.P(7)
+                if not better:
+                    score += self.P(7)
 
             # But you might also lead with a 5 if you have 5-x-x-x.
             # Maybe just in the endgame.

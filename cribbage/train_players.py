@@ -11,7 +11,9 @@ the previous Helen, and keeping the new parameters if they result in an improvem
 import random
 import sys
 
+import matplotlib.pyplot as plt
 import numpy as np
+import pandas as pd
 
 from game import compare_players
 
@@ -21,44 +23,49 @@ from test_players import showstats, round_robin
 
 def main():
     n = 200
+    passes = 1000
     Max = MaxerCribbagePlayer()
-    bestHelen = LearnableHeuristicCribbagePlayer()
-    newHelen = LearnableHeuristicCribbagePlayer()
+    Helen = LearnableHeuristicCribbagePlayer()
 
-    bestHelen = LearnableHeuristicCribbagePlayer('-0.60, 1.16, 0.07, 1.73, 1.40, 1.51, 1.08, 1.26, 2.00')
+    players = [Helen, Max]
+    player_names = ['Training Helen', 'Max']
 
-    print("Restoring prior best parameters: " + str(bestHelen))
-    print("")
-
-    players = [newHelen, bestHelen, Max]
-    player_names = ['New Helen', 'Best Helen', 'Max']
-
-    playing = True
     random.seed()
 
-    print(f"Playing continuously in batches of {n} games each for {len(players)} players - Ctrl+C to stop.")
+    data_columns = ['Value', 'Games Won', 'Games Played']
+    results = {}  # a dict of one Numpy array with those columns, for each heuristic parameter ID.
+
+    print(f"Playing continuously in batches of {n} games - Ctrl+C to stop.")
     print("")
 
-    while playing:
+    playing = True
+    for pass_num in range(passes):
         try:
-            newHelen.parameters = list(bestHelen.parameters)
-            newHelen.randomize_one_weight()
-            print("New Helen's parameters: " + str(newHelen))
+            if not playing:
+                break
+            Helen.randomize_weights()
 
             stats = round_robin(players, n)
-            showstats(stats, player_names, n * (len(players) - 1))
 
-            if stats[0] > stats[1] + 0.2:
-                print("Old parameters:         " + str(bestHelen))
-                print("Now she's the best Helen going forward.")
-                bestHelen.parameters = newHelen.parameters
-            else:
-                print("Keeping former best:    " + str(bestHelen))
+            for i, p in enumerate(Helen.parameters):
+                d = [p, stats[0], n]
+                if i not in results:
+                    results[i] = np.array([d])
+                else:
+                    results[i] = np.append(results[i], [d], axis=0)
 
-            print("")
         except KeyboardInterrupt:
             playing = False
             print("")
+
+    # Graph.
+    for i in range(Helen.NUM_PARAMS):
+        pvals = results[i]
+        data = pd.DataFrame(columns=data_columns, data=pvals)
+        data.plot.hexbin(0, 1, gridsize=12, title=f"Heuristic {i}")
+        plt.show()
+        print(pvals)
+        print("")
 
 if __name__ == "__main__":
     main()

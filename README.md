@@ -24,9 +24,9 @@ Currently, Max is the best player, but Helen is better than Simon.  Typical stat
 
 ```
   Player       Games won  Percent
-  Max               2105   61.9%
-  Helen             1554   45.7%
-  Simon             1441   42.4%
+  Max               2507   59.7%
+  Helen             2049   48.8%
+  Simon             1744   41.5%
 ```
 
 Plans

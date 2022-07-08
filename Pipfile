@@ -6,6 +6,8 @@ name = "pypi"
 [packages]
 cython = "*"
 numpy = "*"
+pandas = "*"
+matplotlib = "*"
 
 [dev-packages]
 

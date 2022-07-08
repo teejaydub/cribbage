@@ -42,7 +42,7 @@ class ParameterizedHeuristicCribbagePlayer(HeuristicCribbagePlayer):
         return ', '.join([f"{p:0.2f}" for p in self.parameters])
 
     def random_weight(self):
-        return np.clip(random.gauss(mu=1, sigma=1), -1, 2)
+        return random.uniform(-1, 2)
 
     def randomize_weights(self):
         ''' Set all weights randomly. '''
