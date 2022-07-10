@@ -23,10 +23,10 @@ rankings when they play against each other.  Currently, they include:
 Currently, Max is the best player, but Helen is better than Simon.  Typical stats:
 
 ```
-  Player       Games won  Percent
-  Max               2507   59.7%
-  Helen             2049   48.8%
-  Simon             1744   41.5%
+Player       Games won  Percent
+Max              40550   61.3%
+Helen            30531   46.1%
+Simon            28219   42.6%
 ```
 
 Plans
@@ -35,32 +35,38 @@ Plans
 * Train Helen continuously, choosing random values for heuristic parameters
   and keeping the changes that result in better rankings over many games. See
   if that improves her ranking.
-  * Optimize each parameter individually, with binary search.
-  * Instead of a fixed number of games, shoot for a fixed number of usages of that parameter.
-  * Add CSV output so we can graph the progress over time.  (Or just show graphs, I guess)
-  * Switch to a genetic algorithm, that does round-robin for more players at
-    once, then replaces the n-2 worst ones with a genetic combination of the
-    2 best ones + 1 small mutation.
+  * P1: maybe a peak at 0.5, so adjust the multipler?
+  * P5: try doubling it?
+  * P6: use 0, or 2?
+    * Keep track of the number of references to a given parameter?  This one may be rare.
+  * P7: Seems clearly better at -1 or 0 than 1.
+  * Score other combination possibilities with the held cards, maybe by my method of 12ths
+  * Compute correlation of weight with games won, maybe piecewise.
   * Add parameters for all the heuristic scores, even the ones from authorities.
   * Parallelize this, so it can run over multiple processors at once.
 
 * Work on determining which heuristics are most powerful/helpful.  Similar
   process, but pick a set of parameters to clear to 0.
 
-* Group the heuristics by degree of power, and make players Anna, Ben, and Clara, where
-  Anna starts with a heuristic set from Helen that's easy to remember, and then each
-  adds some more.
+* Group the heuristics by degree of power, and make players Anna, Ben, and
+  Clara, where Anna starts with a heuristic set from Helen that's easy to
+  remember, and then each adds some more.
 
 Getting started
 ===============
 
-`pipenv install` will set up the environment.
+`pipenv install` sets up the environment.
 
-`pipenv shell` will activate the environment.
+`pipenv shell` activates the environment, if you want to run other tools or
+use Python interactively.
 
-`pipenv run optimize` will compile Will's C function for scoring hands, to improve speed.
+`pipenv run optimize` compiles Will's C function for scoring hands, to improve
+speed.
 
-`pipenv run compare` will start an endless tournament to rank the available players.
+`pipenv run compare` starts an endless tournament to rank the available players.
+
+`pipenv run train` tries out the heuristics and produces graphs of how weights
+relate to games won for each.
 
 Links
 =====

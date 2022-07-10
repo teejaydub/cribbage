@@ -22,8 +22,8 @@ from maxerplayer import MaxerCribbagePlayer
 from test_players import showstats, round_robin
 
 def main():
-    n = 200
-    passes = 1000
+    n = 2000
+    passes = 2000
     Max = MaxerCribbagePlayer()
     Helen = LearnableHeuristicCribbagePlayer()
 
@@ -35,7 +35,7 @@ def main():
     data_columns = ['Value', 'Games Won', 'Games Played']
     results = {}  # a dict of one Numpy array with those columns, for each heuristic parameter ID.
 
-    print(f"Playing continuously in batches of {n} games - Ctrl+C to stop.")
+    print(f"Playing {passes} passes of {n} games each - Ctrl+C to stop early.")
     print("")
 
     playing = True

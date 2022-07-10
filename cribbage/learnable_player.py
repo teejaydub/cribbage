@@ -94,7 +94,7 @@ class LearnableHeuristicCribbagePlayer(ParameterizedHeuristicCribbagePlayer):
             to15 = 15 - total
             if to15 not in new_values:
                 score -= self.P(4)
-                # And subtract more if it's a ten-card.
+                # And subtract more if it's a ten-card (i.e., you just led with a 5 or summed to 5).
                 if to15 == 10:
                     score -= self.P(5)
 
@@ -108,7 +108,7 @@ class LearnableHeuristicCribbagePlayer(ParameterizedHeuristicCribbagePlayer):
             # Leading with your highest card < 5 is a good principle.
             # It saves any lower cards for making 31 later.
             face_value = cards.card_face(choice)
-            if face_value < 4:
+            if face_value < 5:
                 # Is there anything higher than this in your hand that's less than 5?
                 better = [c for c in hand if cards.card_face(c) > face_value and cards.card_face(c) < 5]
                 if not better:
@@ -117,7 +117,7 @@ class LearnableHeuristicCribbagePlayer(ParameterizedHeuristicCribbagePlayer):
             # But you might also lead with a 5 if you have 5-x-x-x.
             # Maybe just in the endgame.
             # (http://www.cribbageforum.com/Leading5.htm)
-            if face_value == 5 and sum(new_values) == 35 and player_score > 100:
+            if face_value == 5 and sum(new_values) == 30 and player_score > 100:
                 score += self.P(8) * 2
 
         return score
