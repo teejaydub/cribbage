@@ -32,6 +32,22 @@ def run_lengths(of_value, values):
 
     return result
 
+def sums_in_hand(values, target):
+    ''' Return a count of the distinct ways to sum to the target in the given hand.
+        Assumes values has at least one element.
+        Arguments:
+        * `values`: a list of the card values, from 1-10.
+    '''
+    if len(values) == 1:
+        return values[0] == target
+    else:
+        result = sums_in_hand(values[1:], target)
+        if values[0] == target:
+            result += 1
+        elif values[0] < target:
+            result += sums_in_hand(values[1:], target - values[0])
+        return result
+
 def pair_values_in_hand(steps):
     ''' Return a count of the pairs in the given hand.
         Don't count triples or quadruples.
@@ -110,7 +126,10 @@ class LearnableHeuristicCribbagePlayer(ParameterizedHeuristicCribbagePlayer):
         twelfths += (24 - 13) * double_runs_in_hand(hand_steps)
 
         # If you have three of a kind (does anyone really say "pair royal"?), you could get a fourth for 6 more points.
-        twelfths += 0.24 * 6 * pairs_royal_in_hand(hand_steps)
+        twelfths += 0.25 * 6 * pairs_royal_in_hand(hand_steps)
+
+        # It's pretty likely that you'll get a ten-valued starter, so any 5 card or sums of 5 have a 4/12 chance of 2 points.
+        twelfths += 4 * 2 * sums_in_hand(hand_faces, 5)
 
         score += round(twelfths / 12)
 
