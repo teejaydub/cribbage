@@ -1,14 +1,15 @@
 
 import random
 import numpy as np
-import cards
-from player import CribbagePlayer
-from heuristicplayer import HeuristicCribbagePlayer
+
+from . import cards
+from . player import CribbagePlayer
+from . heuristicplayer import HeuristicCribbagePlayer
 try:
-    from _cribbage_score import score_hand, score_play, get_legal_play_idxs
+    from . _cribbage_score import score_hand, score_play, get_legal_play_idxs
 
 except ImportError:
-    from cribbage_score import score_hand, score_play
+    from . cribbage_score import score_hand, score_play
 
 # Tables from Schell, http://www.cribbageforum.com/SchellDiscard.htm
 # Indices are card values, 0-12, and values are the expected value of the resulting crib.

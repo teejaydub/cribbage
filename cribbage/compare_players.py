@@ -6,12 +6,12 @@ import sys
 
 import numpy as np
 
-from game import compare_players
+from . game import compare_players
 
-from randomplayer import RandomCribbagePlayer
-from simpleplayer import SimpleCribbagePlayer
-from learnable_player import LearnableHeuristicCribbagePlayer
-from maxerplayer import MaxerCribbagePlayer
+from . randomplayer import RandomCribbagePlayer
+from . simpleplayer import SimpleCribbagePlayer
+from . learnable_player import LearnableHeuristicCribbagePlayer
+from . maxerplayer import MaxerCribbagePlayer
 
 
 def showstats(scores, names, games_each):

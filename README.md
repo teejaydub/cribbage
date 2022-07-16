@@ -24,9 +24,9 @@ Currently, Max is the best player, but Helen is better than Simon.  Typical stat
 
 ```
 Player       Games won  Percent
-Max              40550   61.3%
-Helen            30531   46.1%
-Simon            28219   42.6%
+Max             174290   61.3%
+Helen           131552   46.3%
+Simon           120458   42.4%
 ```
 
 Plans
@@ -35,12 +35,12 @@ Plans
 * Train Helen continuously, choosing random values for heuristic parameters
   and keeping the changes that result in better rankings over many games. See
   if that improves her ranking.
+  * Score other combination possibilities with the held cards, maybe by my method of 12ths
   * P1: maybe a peak at 0.5, so adjust the multipler?
   * P5: try doubling it?
   * P6: use 0, or 2?
     * Keep track of the number of references to a given parameter?  This one may be rare.
   * P7: Seems clearly better at -1 or 0 than 1.
-  * Score other combination possibilities with the held cards, maybe by my method of 12ths
   * Compute correlation of weight with games won, maybe piecewise.
   * Add parameters for all the heuristic scores, even the ones from authorities.
   * Parallelize this, so it can run over multiple processors at once.
@@ -67,6 +67,8 @@ speed.
 
 `pipenv run train` tries out the heuristics and produces graphs of how weights
 relate to games won for each.
+
+`pipenv run test` runs all unit tests.
 
 Links
 =====

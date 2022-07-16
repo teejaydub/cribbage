@@ -2,7 +2,7 @@ import random
 
 import numpy as np
 
-from heuristicplayer import HeuristicCribbagePlayer
+from . heuristicplayer import HeuristicCribbagePlayer
 
 class ParameterizedHeuristicCribbagePlayer(HeuristicCribbagePlayer):
     '''

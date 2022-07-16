@@ -16,5 +16,6 @@ python_version = "3.8"
 
 [scripts]
 optimize = "python setup.py build_ext --inplace"
-compare = "python cribbage/test_players.py"
-train = "python cribbage/train_players.py"
+compare = "python -m cribbage.compare_players"
+train = "python -m cribbage.train_players"
+test = "python -m unittest"

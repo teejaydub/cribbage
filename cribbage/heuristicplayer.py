@@ -2,8 +2,8 @@
 import random
 import numpy as np
 
-import cards
-from player import CribbagePlayer
+from . import cards
+from . player import CribbagePlayer
 
 
 KEEP_COMBINATIONS = [(0, 1, 2, 3),

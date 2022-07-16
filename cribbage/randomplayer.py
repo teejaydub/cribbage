@@ -10,7 +10,8 @@ A CribbagePlayer that always makes a random move.
 
 from __future__ import absolute_import, print_function
 import random
-from player import CribbagePlayer
+
+from . player import CribbagePlayer
 
 class RandomCribbagePlayer(CribbagePlayer):
     '''A CribbagePlayer that always makes a random move.'''

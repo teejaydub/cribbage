@@ -1,9 +1,83 @@
 import numpy as np
 
-import cards
-import cribbage_score
-import _cribbage_score
-from parameterized_player import ParameterizedHeuristicCribbagePlayer
+from cribbage import cards
+from cribbage import cribbage_score
+from cribbage import _cribbage_score
+from cribbage.parameterized_player import ParameterizedHeuristicCribbagePlayer
+
+
+def values_to_steps(values):
+    ''' Given a list of numeric values, return a list of the sizes of the steps from one to the next.
+        If a list of n values is given, a list of n - 1 values is returned.
+    '''
+    return [values[i + 1] - values[i] for i in range(len(values) - 1)]
+
+def run_lengths(of_value, values):
+    ''' Return a list of the lengths of runs of the given value in a list of values.
+        A single appearance of of_value is listed as a run of length 1.
+        A number of consecutive instances of of_value are listed as a run of that length.
+        Intervening values separate runs.
+    '''
+    run_len = 0
+    result = []
+    for v in values:
+        if v == of_value:
+            run_len += 1
+        else:
+            if run_len:
+                result.append(run_len)
+                run_len = 0
+    if run_len:
+        result.append(run_len)
+
+    return result
+
+def pair_values_in_hand(steps):
+    ''' Return a count of the pairs in the given hand.
+        Don't count triples or quadruples.
+        Assume there are at most 4 cards, so 3 steps.
+        Arguments:
+        * `steps`: a list of the distances between pairs of subsequent cards in the hand.
+    '''
+    # Find the runs of same-valued cards.
+    same = run_lengths(0, steps)
+    # Count the runs of length two.
+    return same.count(1)
+
+def pairs_royal_in_hand(steps):
+    ''' Return a count of the "pairs royal" (three of a kind) in the given hand.
+        Doesn't count quadruples.
+        Assumes there are at most 4 cards, so will only return 0 or 1.
+        Arguments:
+        * `steps`: a list of the distances between pairs of subsequent cards in the hand.
+    '''
+    # Find the runs of same-valued cards.
+    same = run_lengths(0, steps)
+    # Count the runs of length three.
+    return same.count(2)
+
+def runs_in_hand(steps):
+    ''' Return a count of the runs in the given hand - 0 or 1 for a four-card hand.
+        Assume hand is sorted by value, and has at most 4 cards.
+        Arguments:
+        * `steps`: a list of the distances between pairs of subsequent cards in the hand.
+    '''
+    # Since the hand is sorted, all steps are >= 0.
+    # If they're 1, it indicates two adjacent cards that count up.
+    # If you have a run of two 1s in steps, it means three adjacent cards.
+    ascending = run_lengths(1, steps)
+    return len([a for a in ascending if a > 1])
+
+def double_runs_in_hand(steps):
+    ''' Return a count of the double runs in the given hand - 0 or 1 for a four-card hand.
+        Assume hand is sorted by value, and has exactly 4 cards.
+        Arguments:
+        * `steps`: a list of the distances between pairs of subsequent cards in the hand.
+    '''
+    if (steps == [0, 1, 1]) or (steps == [1, 0, 1]) or (steps == [1, 1, 0]):
+        return 1
+    else:
+        return 0
 
 class LearnableHeuristicCribbagePlayer(ParameterizedHeuristicCribbagePlayer):
     '''
@@ -17,6 +91,28 @@ class LearnableHeuristicCribbagePlayer(ParameterizedHeuristicCribbagePlayer):
     def score_kept_cards(self, keep):
         # Find the score without a starter.
         score = cribbage_score.score_hand(keep, None)
+
+        # What's likely to make you extra points in the starter?
+        # Leave it to Max to score everything; we humans can just look for some patterns and bump up the expected value.
+        # Count points in multiples of 1/12, because that's roughly the probability of getting any given value as starter.
+        hand_faces = sorted(cards.hand_to_faces(keep, 1))
+        # Find the steps - like [1, 0, 1] for [6, 7, 7, 8]
+        hand_steps = values_to_steps(hand_faces)
+        twelfths = 0
+
+        # If you have a pair, you can make 4 more with a third, though half those cards are already out.
+        twelfths += 0.5 * 4 * pair_values_in_hand(hand_steps)
+
+        # If you have a run, you could extend it by 1 at each end, or count it again if you double any of its cards.
+        twelfths += runs_in_hand(hand_steps) * (1 + 3*3 + 1)
+
+        # If you have a double run, you get both of those plus more; the total should work out to about 2 = 24/12.
+        twelfths += (24 - 13) * double_runs_in_hand(hand_steps)
+
+        # If you have three of a kind (does anyone really say "pair royal"?), you could get a fourth for 6 more points.
+        twelfths += 0.24 * 6 * pairs_royal_in_hand(hand_steps)
+
+        score += round(twelfths / 12)
 
         # Add one point per card under 5 left in hand, for pegging potential.
         lows = len([c for c in keep if cards.card_worth(c) < 5])

@@ -12,12 +12,13 @@ try to pick the best cards to discard and play.
 from __future__ import absolute_import, print_function
 import random
 import numpy as np
-from cards import make_deck
-from player import CribbagePlayer
+
+from . cards import make_deck
+from . player import CribbagePlayer
 try:
-    from _cribbage_score import score_hand, score_play
+    from . _cribbage_score import score_hand, score_play
 except ImportError:
-    from cribbage_score import score_hand, score_play
+    from . cribbage_score import score_hand, score_play
 
 KEEP_COMBINATIONS = [(0, 1, 2, 3),
                      (0, 1, 2, 4),
