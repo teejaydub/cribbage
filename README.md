@@ -24,9 +24,9 @@ Currently, Max is the best player, but Helen is better than Simon.  Typical stat
 
 ```
 Player       Games won  Percent
-Max              14023   61.5%
-Helen            10681   46.8%
-Simon             9496   41.6%
+Max              68277   61.0%
+Helen            52622   47.0%
+Simon            47101   42.1%
 ```
 
 Plans
@@ -35,7 +35,6 @@ Plans
 * Train Helen continuously, choosing random values for heuristic parameters
   and keeping the changes that result in better rankings over many games. See
   if that improves her ranking.
-  * Score other combination possibilities with the held cards, maybe by my method of 12ths
   * P1: maybe a peak at 0.5, so adjust the multipler?
   * P5: try doubling it?
   * P6: use 0, or 2?

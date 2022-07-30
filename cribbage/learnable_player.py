@@ -123,7 +123,7 @@ class LearnableHeuristicCribbagePlayer(ParameterizedHeuristicCribbagePlayer):
         twelfths += runs_in_hand(hand_steps) * (1 + 3*3 + 1)
 
         # If you have a double run, you get both of those plus more; the total should work out to about 2 = 24/12.
-        twelfths += (24 - 13) * double_runs_in_hand(hand_steps)
+        twelfths += (24 - 10) * double_runs_in_hand(hand_steps)
 
         # If you have three of a kind (does anyone really say "pair royal"?), you could get a fourth for 6 more points.
         twelfths += 0.25 * 6 * pairs_royal_in_hand(hand_steps)
@@ -173,8 +173,9 @@ class LearnableHeuristicCribbagePlayer(ParameterizedHeuristicCribbagePlayer):
         # Prefer large spans that don't include low cards.
         # Spans can run from 1 to 12, and generally produce total points from 4.3 to 6+.
         # So pretend it's 4 points, then scaling up to 6 points for adjacent
+        # Except that a constant score for all discards makes no difference, so go from 0-2.
         span = dfs[1] - dfs[0]
-        score = 4 + (13 - span) / 6.0 * self.P(1)
+        score = (13 - span) / 6.0 * self.P(1)
 
         # Edge cards are less risky, because they can only be extended in one direction.
         if 1 in dfs or 13 in dfs:
