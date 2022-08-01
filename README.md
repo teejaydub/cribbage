@@ -24,9 +24,9 @@ Currently, Max is the best player, but Helen is better than Simon.  Typical stat
 
 ```
 Player       Games won  Percent
-Max              68277   61.0%
-Helen            52622   47.0%
-Simon            47101   42.1%
+Max             845710   60.8%
+Helen           655648   47.1%
+Simon           586042   42.1%
 ```
 
 Plans
@@ -35,10 +35,10 @@ Plans
 * Train Helen continuously, choosing random values for heuristic parameters
   and keeping the changes that result in better rankings over many games. See
   if that improves her ranking.
-  * P1: maybe a peak at 0.5, so adjust the multipler?
-  * P5: try doubling it?
   * P6: use 0, or 2?
     * Keep track of the number of references to a given parameter?  This one may be rare.
+      * P5 as well.
+      * Could tell "compare" to focus on a given parameter, and include only games where that parameter has been used.
   * P7: Seems clearly better at -1 or 0 than 1.
   * Compute correlation of weight with games won, maybe piecewise.
   * Add parameters for all the heuristic scores, even the ones from authorities.

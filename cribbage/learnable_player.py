@@ -212,7 +212,7 @@ class LearnableHeuristicCribbagePlayer(ParameterizedHeuristicCribbagePlayer):
                 score -= self.P(4)
                 # And subtract more if it's a ten-card (i.e., you just led with a 5 or summed to 5).
                 if to15 == 10:
-                    score -= self.P(5)
+                    score -= 2 * self.P(5)
 
         # Add if the total is 11, and you have any tens to play.
         if total == 11:
