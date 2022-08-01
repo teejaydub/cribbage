@@ -210,14 +210,15 @@ class LearnableHeuristicCribbagePlayer(ParameterizedHeuristicCribbagePlayer):
             to15 = 15 - total
             if to15 not in new_values:
                 score -= self.P(4)
-                # And subtract more if it's a ten-card (i.e., you just led with a 5 or summed to 5).
-                if to15 == 10:
-                    score -= 2 * self.P(5)
+                # Statistically, this seems not to matter?
+                # # And subtract more if it's a ten-card (i.e., you just led with a 5 or summed to 5).
+                # if to15 == 10:
+                #     score -= 2 * self.P(5)
 
         # Add if the total is 11, and you have any tens to play.
-        if total == 11:
-            if 10 in new_values:
-                score += self.P(6)
+        # if total == 11:
+        #     if 10 in new_values:
+        #         score += self.P(6)
 
         # Leading choices:
         if len(linear_play) == 0:

@@ -35,10 +35,11 @@ Plans
 * Train Helen continuously, choosing random values for heuristic parameters
   and keeping the changes that result in better rankings over many games. See
   if that improves her ranking.
-  * P6: use 0, or 2?
-    * Keep track of the number of references to a given parameter?  This one may be rare.
-      * P5 as well.
-      * Could tell "compare" to focus on a given parameter, and include only games where that parameter has been used.
+  * Keep track of the number of references to a given parameter?  Some may be beneficial, but only in rare circumstances.
+    * P6: use 0, or 2?
+    * P5 as well.
+    * Could tell "compare" to focus on a given parameter, and include only games where that parameter has been used.
+  * Avoid chances for runs
   * P7: Seems clearly better at -1 or 0 than 1.
   * Compute correlation of weight with games won, maybe piecewise.
   * Add parameters for all the heuristic scores, even the ones from authorities.
@@ -46,6 +47,8 @@ Plans
 
 * Work on determining which heuristics are most powerful/helpful.  Similar
   process, but pick a set of parameters to clear to 0.
+
+* Explore the full decision tree for pegging?  It's not very large, and we're exploring much of it anyway with Max.
 
 * Group the heuristics by degree of power, and make players Anna, Ben, and
   Clara, where Anna starts with a heuristic set from Helen that's easy to
