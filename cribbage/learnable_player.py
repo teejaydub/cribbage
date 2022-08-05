@@ -201,8 +201,9 @@ class LearnableHeuristicCribbagePlayer(ParameterizedHeuristicCribbagePlayer):
         new_layout = linear_play + [choice]
         new_hand = set(hand) - set([choice])
         score = _cribbage_score.score_play(new_layout)
+        face_value = cards.card_face(choice)
 
-        # Subtract if the resulting total is > 4 and less than 15, because your opponent might make it.
+        # Subtract if the resulting total is > 4 and less than 15, because your opponent might make 15.
         # But that's OK if you can make a pair with the card that will make 15.
         total = cards.cards_worth(new_layout)
         new_values = cards.hand_to_values(new_hand)
@@ -215,6 +216,21 @@ class LearnableHeuristicCribbagePlayer(ParameterizedHeuristicCribbagePlayer):
                 # if to15 == 10:
                 #     score -= 2 * self.P(5)
 
+        # Subtract if you're playing within 1 or 2 of the last-played card, because pone could make a run.
+        if len(linear_play) > 0:
+            last_card = cards.card_face(linear_play[len(linear_play) - 1])
+            run_face = None
+            a = min(last_card, face_value)
+            b = max(last_card, face_value)
+            if b == a  + 1 and a > 1:
+                run_face = a - 1
+            elif b == a + 2:
+                run_face = a + 1
+            if run_face:
+                # But only if the missing card would be allowed - wouldn't go over 31.
+                if total + run_face <= 31:
+                    score -= self.P(5)
+
         # Add if the total is 11, and you have any tens to play.
         # if total == 11:
         #     if 10 in new_values:
@@ -222,7 +238,6 @@ class LearnableHeuristicCribbagePlayer(ParameterizedHeuristicCribbagePlayer):
 
         # Leading choices:
         if len(linear_play) == 0:
-            face_value = cards.card_face(choice)
             # Leading with your highest card < 5 seems like a good principle.
             # It saves any lower cards for making 31 later.
             # But the statistics seems to indicate it's actually slightly harmful.

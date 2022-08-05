@@ -24,9 +24,9 @@ Currently, Max is the best player, but Helen is better than Simon.  Typical stat
 
 ```
 Player       Games won  Percent
-Max            2707366   60.5%
-Helen          2144663   48.0%
-Simon          1855971   41.5%
+Max             321114   59.0%
+Helen           277459   50.9%
+Simon           218327   40.1%
 ```
 
 Plans
@@ -35,12 +35,11 @@ Plans
 * Train Helen continuously, choosing random values for heuristic parameters
   and keeping the changes that result in better rankings over many games. See
   if that improves her ranking.
+  * Avoid chances for runs during pegging - unless we can complete them
   * Keep track of the number of references to a given parameter?  Some may be beneficial, but only in rare circumstances.
     * P6: use 0, or 2?
     * P5 as well.
     * Could tell "compare" to focus on a given parameter, and include only games where that parameter has been used.
-  * Avoid chances for runs
-  * P7: Seems clearly better at -1 or 0 than 1.
   * Compute correlation of weight with games won, maybe piecewise.
   * Add parameters for all the heuristic scores, even the ones from authorities.
   * Parallelize this, so it can run over multiple processors at once.
@@ -49,6 +48,8 @@ Plans
   process, but pick a set of parameters to clear to 0.
 
 * Explore the full decision tree for pegging?  It's not very large, and we're exploring much of it anyway with Max.
+
+* Start including ideas of conservative vs. risky play - max possible vs. expected value or least-worst.
 
 * Group the heuristics by degree of power, and make players Anna, Ben, and
   Clara, where Anna starts with a heuristic set from Helen that's easy to
