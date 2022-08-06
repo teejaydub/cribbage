@@ -24,9 +24,9 @@ Currently, Max is the best player, but Helen is better than Simon.  Typical stat
 
 ```
 Player       Games won  Percent
-Max             321114   59.0%
-Helen           277459   50.9%
-Simon           218327   40.1%
+Max              77540   59.0%
+Helen            67021   51.0%
+Simon            52539   40.0%
 ```
 
 Plans
@@ -35,7 +35,18 @@ Plans
 * Train Helen continuously, choosing random values for heuristic parameters
   and keeping the changes that result in better rankings over many games. See
   if that improves her ranking.
-  * Avoid chances for runs during pegging - unless we can complete them
+  * Game-centered heuristics
+    * Report statistics for point values
+      * Deals/game, pone turns/game, dealer pegging, pone pegging, dealer hand points, crib points, pone points
+      * Predict winner by average point values
+      * Decide when to play in "risky" or "safe" mode
+        * Risky = hoping for max possible points, make the choices with best possible outcomes
+        * Safe = make the choices with best expected values
+      * Decide when to play in "slow" or "fast" mode
+        * When you expect that net point changes will be even, prefer larger or smaller movements, to get in sync with a winning position.
+  * Add God player, who does full lookahead on each round with knowledge of all cards
+    * Can play for min/max, where you assume perfect play in your opponent
+    * Or if you predict a loss otherwise, go for the most points if your opponent chooses poorly
   * Keep track of the number of references to a given parameter?  Some may be beneficial, but only in rare circumstances.
     * P6: use 0, or 2?
     * P5 as well.

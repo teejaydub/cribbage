@@ -95,6 +95,56 @@ def double_runs_in_hand(steps):
     else:
         return 0
 
+def run_plays(total, last_cards, hand):
+    ''' Return a list of plays from hand that make a run with last_cards.
+        Return [] if there are none.
+        Arguments:
+        * `total`: the total count by the end of those cards.
+        * `run_cards`: a list of the last cards played.
+        * `hand`: the cards remaining in the player's hand.
+        Return value:
+        * A list of `(card, length)`
+        * `card`: the card to play from hand
+        * `length`: the length of the longest run made with this card
+    '''
+    # Weed out degenerate cases, where there aren't enough cards.
+    if len(last_cards) < 2:
+        return []
+
+    # You can only play the cards that won't go over 31.
+    max_worth = 31 - total
+    if max_worth < 10:
+        hand = [h for h in hand if cards.card_worth(h) <= max_worth]
+    if len(hand) == 0:
+        return []
+
+    # Try each card added to the existing play.
+    result = []
+    play_faces = cards.hand_to_faces(last_cards, 0)
+    for h in hand:
+        tail_len = tail_run_length(play_faces + [cards.card_face(h)])
+        if tail_len:
+            result.append((h, tail_len))
+
+    return result
+
+def tail_run_length(faces):
+    ''' Return the length of the longest run of 3 or more that can be made from faces,
+        that includes the last card.
+        If there's no run of 3 or more at the tail of faces, return 0.
+    '''
+    if len(faces) < 3:
+        return 0
+    steps = values_to_steps(sorted(faces))
+    # If that's all 1, it's all a run.
+    for s in steps:
+        if s != 1:
+            # It's not a run, the next shorter tail might be.
+            return tail_run_length(faces[1:])
+    # We made it, so it's all a run.
+    return len(faces)
+
+
 class LearnableHeuristicCribbagePlayer(ParameterizedHeuristicCribbagePlayer):
     '''
     A cribbage player with intermediate-level heuristics,
@@ -198,15 +248,15 @@ class LearnableHeuristicCribbagePlayer(ParameterizedHeuristicCribbagePlayer):
 
     def score_play(self, linear_play, choice, hand, played_cards, player_score):
         # Start with the immediate score.
-        new_layout = linear_play + [choice]
+        choice_face = cards.card_face(choice)
+        new_play = linear_play + [choice]
+        total = cards.cards_worth(new_play)
+        score = _cribbage_score.score_play(new_play)
         new_hand = set(hand) - set([choice])
-        score = _cribbage_score.score_play(new_layout)
-        face_value = cards.card_face(choice)
+        new_values = cards.hand_to_values(new_hand)
 
         # Subtract if the resulting total is > 4 and less than 15, because your opponent might make 15.
         # But that's OK if you can make a pair with the card that will make 15.
-        total = cards.cards_worth(new_layout)
-        new_values = cards.hand_to_values(new_hand)
         if total > 4 and total < 15:
             to15 = 15 - total
             if to15 not in new_values:
@@ -216,20 +266,53 @@ class LearnableHeuristicCribbagePlayer(ParameterizedHeuristicCribbagePlayer):
                 # if to15 == 10:
                 #     score -= 2 * self.P(5)
 
-        # Subtract if you're playing within 1 or 2 of the last-played card, because pone could make a run.
-        if len(linear_play) > 0:
-            last_card = cards.card_face(linear_play[len(linear_play) - 1])
-            run_face = None
-            a = min(last_card, face_value)
-            b = max(last_card, face_value)
-            if b == a  + 1 and a > 1:
-                run_face = a - 1
-            elif b == a + 2:
-                run_face = a + 1
-            if run_face:
-                # But only if the missing card would be allowed - wouldn't go over 31.
-                if total + run_face <= 31:
-                    score -= self.P(5)
+        SIMPLE_RUN_HEURISTIC = True
+        if SIMPLE_RUN_HEURISTIC:
+            # Subtract if you're playing within 1 or 2 of the last-played card, because pone could make a run.
+            if len(linear_play) > 0:
+                last_card = cards.card_face(linear_play[len(linear_play) - 1])
+                run_face = None
+                a = min(last_card, choice_face)
+                b = max(last_card, choice_face)
+                if b == a  + 1 and a > 1:
+                    run_face = a - 1
+                elif b == a + 2:
+                    run_face = a + 1
+                if run_face:
+                    # But only if the missing card would be allowed - wouldn't go over 31.
+                    if total + run_face <= 31:
+                        score -= self.P(5)
+        else:
+            # See if opponent could extend the run in response.
+            # This is a little more like analysis than a heuristic,
+            # and disregards other types of scoring,
+            # but seems like a reasonable thing for a human to focus on.
+            # It also turns out to perform worse than SIMPLE_RUN_HEURISTIC above in practice,
+            # by 1.6% consistently, even though it takes much more detailed cases into account?!
+            unplayed_cards = sorted(set(cards.make_deck()) - set(hand) - set(played_cards))
+            plays = run_plays(total, new_play, unplayed_cards)
+            # Potential optimization: reduce unplayed_cards to just the unique faces.
+            if plays:
+                # Then see if I could make a run in response to that run.
+                # (This is about as far as we can expect a human to look ahead?)
+                best_score = 0
+                best_counter_score = 0
+                for play in plays:
+                    # print("have {}, play {}, response {} for -{}".format(
+                    #     cards.hand_to_faces(linear_play, 1),
+                    #     choice_face + 1,
+                    #     cards.card_face(play[0] + 1), play[1]))
+                    best_score = max(best_score, play[1])
+                    counters = run_plays(total + cards.card_worth(play[0]),
+                        new_play + [play[0]],
+                        new_hand)
+                    if counters:
+                        best_counter_score = max([c[1] for c in counters])
+                        # print("  and counters {}, best {}".format(
+                        #     list([(cards.card_face(c[0]) + 1, c[1]) for c in counters]),
+                        #     best_counter_score))
+                # So score the difference between what the opponent can make with a run and what we can.
+                score += best_counter_score - best_score
 
         # Add if the total is 11, and you have any tens to play.
         # if total == 11:
@@ -250,7 +333,7 @@ class LearnableHeuristicCribbagePlayer(ParameterizedHeuristicCribbagePlayer):
             # But you might also lead with a 5 if you have 5-x-x-x.
             # Maybe just in the endgame.
             # (http://www.cribbageforum.com/Leading5.htm)
-            if face_value == 5 and sum(new_values) == 30 and player_score > 100:
+            if choice_face == 5 and sum(new_values) == 30 and player_score > 100:
                 score += self.P(8) * 2
 
         return score
