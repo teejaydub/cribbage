@@ -13,24 +13,30 @@ from . simpleplayer import SimpleCribbagePlayer
 from . learnable_player import LearnableHeuristicCribbagePlayer
 from . maxerplayer import MaxerCribbagePlayer
 
-def point_averages(point_types):
+def point_averages(point_types, games_each):
     result = ''
     for t in sorted(point_types.keys()):
         if t.endswith('_pt'):
-            b = t.removesuffix('_pt')
-            ct = b + '_ct'
-            result += "  {}: {:.1f}".format(b, point_types[t] / point_types[ct])
+            base = t.removesuffix('_pt')
+            ct = base + '_ct'
+            display = base.replace('_', ' ')
+            result += "  {}: {:.1f}".format(display, point_types[t] / point_types[ct])
+    result += "  {:.1f}+{:.1f}={:.1f}".format(
+        point_types['D_hand_ct'] / games_each,
+        point_types['P_hand_ct'] / games_each,
+        (point_types['D_hand_ct'] + point_types['P_hand_ct']) / games_each)
     return result
 
 def showstats(scores, names, games_each, point_types):
     print("")
-    print("{:12} {:9}  {}  {}".format('Player', 'Games won', 'Percent', 'Averages'))
+    print("{:12} {:9}  {}  {:63}  {}".format('Player', 'Games won', 'Percent',
+        'Averages for Dealer and Pone', 'Hand counts'))
     records = zip(scores, names, point_types)
     records = sorted(records, key=lambda r: r[0], reverse=True)  # best first
     for record in records:
         percent = 100 * record[0] / games_each
         print("{:12} {:9.0f}   {:.1f}% {}".format(record[1], record[0], percent,
-            point_averages(record[2])))
+            point_averages(record[2], games_each)))
 
 def round_robin(players, n=100, point_types=None):
     ''' Play n games between each pair of players, round-robin.

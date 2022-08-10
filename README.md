@@ -23,10 +23,10 @@ rankings when they play against each other.  Currently, they include:
 Currently, Max is the best player, but Helen is better than Simon.  Typical stats (from `pipenv run compare`):
 
 ```
-Player       Games won  Percent
-Max              77540   59.0%
-Helen            67021   51.0%
-Simon            52539   40.0%
+Player       Games won  Percent  Averages for Dealer and Pone                                     Hand counts
+Max               3317   59.2%   D crib: 5.0  D hand: 7.9  D play: 3.6  P hand: 8.1  P play: 2.2  4.3+4.4=8.7
+Helen             2853   50.9%   D crib: 4.6  D hand: 8.0  D play: 3.6  P hand: 8.0  P play: 2.2  4.2+4.4=8.7
+Simon             2230   39.8%   D crib: 4.1  D hand: 8.2  D play: 3.5  P hand: 8.2  P play: 2.0  4.1+4.4=8.5
 ```
 
 Plans
@@ -37,8 +37,6 @@ Plans
   if that improves her ranking.
   * Game-centered heuristics
     * Report statistics for point values
-      * Analyze point counts
-        * How can they all be the same if Max wins so much more?
       * Predict winner by average point values
       * Decide when to play in "risky" or "safe" mode
         * Risky = hoping for max possible points, make the choices with best possible outcomes

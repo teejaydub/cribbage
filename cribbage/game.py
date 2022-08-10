@@ -123,9 +123,9 @@ class Game(object):
 
     def player_type(self, player_idx):
         if player_idx == self.current_round.dealer_idx:
-            return 'dealer'
+            return 'D'
         else:
-            return 'pone'
+            return 'P'
 
     def count_hand(self, player_idx):
         self.accumulate_data(player_idx, 'hand', 'ct', 1)
