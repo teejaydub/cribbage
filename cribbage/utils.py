@@ -21,6 +21,13 @@ try:
 except ImportError:
     pass
 
+def accumulate_dict(d, key, value):
+    ''' Add value to d[key], even if it doesn't exist yet. '''
+    if key in d:
+        d[key] += value
+    else:
+        d[key] = value
+
 def pairwise(iterable):
     "s -> (s0,s1), (s1,s2), (s2, s3), ..."
     iter1, iter2 = itertools.tee(iterable)

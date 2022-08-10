@@ -12,6 +12,7 @@ from __future__ import absolute_import, print_function
 import random
 
 from . round import Round
+from . utils import accumulate_dict
 
 class Game(object):
     '''
@@ -42,6 +43,8 @@ class Game(object):
         self.rounds = []
         # the last one in the series is called the current_round
         self.current_round = None
+        # Track the types of points earned over the game, for each player.
+        self.point_types = [{}, {}]
 
     def play_round(self, verbose=False):
         '''
@@ -84,7 +87,7 @@ class Game(object):
             if verbose:
                 print('New round')
 
-    def award_points(self, player_idx, num_points, verbose=False):
+    def award_points(self, player_idx, num_points, point_type, verbose=False):
         '''
         Awards `num_points` to player `player_idx`.
 
@@ -94,7 +97,7 @@ class Game(object):
 
         Arguments:
         - `player_idx`:
-        - `num_points`:
+        - `point_type`: A string used to classify the points in statistics.
         '''
         if self.over:
             return False
@@ -104,6 +107,10 @@ class Game(object):
             return False
         # add the points to the given player's score
         self.scores[player_idx] += num_points
+
+        # Classify the points scored for statistical analysis later.
+        self.accumulate_data(player_idx, point_type, 'pt', num_points)
+
         # check if that player is now over target_score
         if self.scores[player_idx] >= self.target_score:
             if verbose:
@@ -114,7 +121,35 @@ class Game(object):
             return False
         return True
 
-def compare_players(players, num_games=1000):
+    def player_type(self, player_idx):
+        if player_idx == self.current_round.dealer_idx:
+            return 'dealer'
+        else:
+            return 'pone'
+
+    def count_hand(self, player_idx):
+        self.accumulate_data(player_idx, 'hand', 'ct', 1)
+
+    def count_crib(self, player_idx):
+        self.accumulate_data(player_idx, 'crib', 'ct', 1)
+
+    def count_play(self):
+        self.accumulate_data(0, 'play', 'ct', 1)
+        self.accumulate_data(1, 'play', 'ct', 1)
+
+    def accumulate_data(self, player_idx, topic, noun, value):
+        accumulate_dict(self.point_types[player_idx],
+            '_'.join([self.player_type(player_idx), topic, noun]),
+            value)
+
+    def accumulate_point_types(self, into):
+        ''' Adds this game's point_types stats into the given array. '''
+        for player in range(2):
+            for t, p in self.point_types[player].items():
+                accumulate_dict(into[player], t, p)
+
+
+def compare_players(players, num_games=1000, point_types=None):
     '''
     Utility function to compare two player objects.
 
@@ -125,12 +160,18 @@ def compare_players(players, num_games=1000):
     Arguments:
     - `players`: a list of two CribbagePlayer objects
     - `num_games`: the number of games to play
+    - `point_types`: a two-item list of dicts breaking down the points won by each player,
+        which is accumulated into unless it is None.
     '''
     stats = [0, 0]
     for _idx in range(num_games):
         game = Game(players)
         game.play()
         stats[game.winner] += 1
+
+        if point_types:
+            game.accumulate_point_types(point_types)
+
         if _idx % 30 == 0:
             print('.', end='', flush=True)
     return stats

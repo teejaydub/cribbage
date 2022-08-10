@@ -137,7 +137,9 @@ class Round(object):
         if starter_value == 10:
             if verbose:
                 print('Dealer gets two points for his nibs')
-            if not self.game.award_points(self.dealer_idx, 2, verbose=verbose):
+            # Include this in "pegging points" because that's where it lies functionally -
+            # it's scored along with the dealer's points for pegging.  And it's rare anyway.
+            if not self.game.award_points(self.dealer_idx, 2, 'play', verbose=verbose):
                 return False
         # add the starter to the set of played cards
         self.played_cards.add(self.starter_card)
@@ -210,6 +212,8 @@ class Round(object):
         # keep track of the last player in this sequence
         self.last_player = None
 
+        self.game.count_play()
+
         # loop forever
         while True:
             # determine which plays the player can legally make
@@ -221,10 +225,10 @@ class Round(object):
             if (self.is_go and not legal_moves) or self.flag_31:
                 # then last_player gets awarded 1 or 2 points, and we restart the sequence
                 if self.flag_31:
-                    if not self.game.award_points(self.last_player, 2, verbose=verbose):
+                    if not self.game.award_points(self.last_player, 2, 'play', verbose=verbose):
                         return False
                 else:
-                    if not self.game.award_points(self.last_player, 1, verbose=verbose):
+                    if not self.game.award_points(self.last_player, 1, 'play', verbose=verbose):
                         return False
                 # restart the sequence
                 if verbose:
@@ -311,7 +315,7 @@ class Round(object):
             if play_score:
                 if verbose:
                     print('Player {} scores:'.format(self.turn_idx+1), play_score)
-                if not self.game.award_points(self.turn_idx, play_score, verbose=verbose):
+                if not self.game.award_points(self.turn_idx, play_score, 'play', verbose=verbose):
                     return False
 
             # players take turns (except when one player is in "Go",
@@ -365,7 +369,8 @@ class Round(object):
         hand_score = score_hand(nondealer_hand, self.starter_card, verbose=verbose)
         if verbose:
             print('Player {}\'s hand scores'.format(nondealer_idx + 1), hand_score)
-        if not self.game.award_points(nondealer_idx, hand_score, verbose=verbose):
+        self.game.count_hand(nondealer_idx)
+        if not self.game.award_points(nondealer_idx, hand_score, 'hand', verbose=verbose):
             return False
 
         # score the dealer's hand
@@ -377,7 +382,8 @@ class Round(object):
         hand_score = score_hand(dealer_hand, self.starter_card, verbose=verbose)
         if verbose:
             print('Player {}\'s hand scores'.format(self.dealer_idx + 1), hand_score)
-        if not self.game.award_points(self.dealer_idx, hand_score, verbose=verbose):
+        self.game.count_hand(self.dealer_idx)
+        if not self.game.award_points(self.dealer_idx, hand_score, 'hand', verbose=verbose):
             return False
 
         # score the dealer's crib
@@ -388,7 +394,8 @@ class Round(object):
         hand_score = score_hand(self.crib, self.starter_card, crib=True, verbose=verbose)
         if verbose:
             print('Player {}\'s crib scores,'.format(self.dealer_idx + 1), hand_score)
-        if not self.game.award_points(self.dealer_idx, hand_score, verbose=verbose):
+        self.game.count_crib(self.dealer_idx)
+        if not self.game.award_points(self.dealer_idx, hand_score, 'crib', verbose=verbose):
             return False
 
         return True

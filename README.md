@@ -37,7 +37,8 @@ Plans
   if that improves her ranking.
   * Game-centered heuristics
     * Report statistics for point values
-      * Deals/game, pone turns/game, dealer pegging, pone pegging, dealer hand points, crib points, pone points
+      * Analyze point counts
+        * How can they all be the same if Max wins so much more?
       * Predict winner by average point values
       * Decide when to play in "risky" or "safe" mode
         * Risky = hoping for max possible points, make the choices with best possible outcomes
