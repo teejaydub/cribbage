@@ -25,12 +25,12 @@ def point_averages(point_types):
 def showstats(scores, names, games_each, point_types):
     print("")
     print("{:12} {:9}  {}  {}".format('Player', 'Games won', 'Percent', 'Averages'))
-    records = zip(scores, names)
+    records = zip(scores, names, point_types)
     records = sorted(records, key=lambda r: r[0], reverse=True)  # best first
-    for i, record in enumerate(records):
+    for record in records:
         percent = 100 * record[0] / games_each
         print("{:12} {:9.0f}   {:.1f}% {}".format(record[1], record[0], percent,
-            point_averages(point_types[i])))
+            point_averages(record[2])))
 
 def round_robin(players, n=100, point_types=None):
     ''' Play n games between each pair of players, round-robin.
