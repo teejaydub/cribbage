@@ -66,8 +66,14 @@ def round_robin(players, n=100, point_types=None):
 
 def main():
     n = 100
-    players = [LearnableHeuristicCribbagePlayer(), SimpleCribbagePlayer(), MaxerCribbagePlayer()]
-    player_names = ['Helen', 'Simon', 'Max']
+    num_players = 3  # 2 or 3
+
+    players = [LearnableHeuristicCribbagePlayer(), MaxerCribbagePlayer()]
+    player_names = ['Helen', 'Max']
+
+    if num_players > 2:
+        players += [SimpleCribbagePlayer()]
+        player_names += ['Simon']
 
     stats = np.zeros(len(players))
     point_types = [{} for p in players]
